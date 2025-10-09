@@ -15,16 +15,15 @@ public class Hausafugabe2 {
         String beruf = input.nextLine();
         input.close();
 
-        StringBuilder sb = new StringBuilder(name);
-        sb.append(" ");
-        sb.append(nachname);
-        sb.append("; ");
-        sb.append(geschlecht);
-        sb.append("; geb. ");
-        sb.append(geburtsdatum);
-        sb.append("; ");
-        sb.append(beruf);
+        String sb = name + " " +
+                nachname +
+                "; " +
+                geschlecht +
+                "; geb. " +
+                geburtsdatum +
+                "; " +
+                beruf;
 
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 }
