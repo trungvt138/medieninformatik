@@ -2,8 +2,8 @@
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        Pokemon p1 = new Pokemon("Charmander", Type.FIRE, 40);
-        Pokemon p2 = new Pokemon("Squirtle", Type.WATER, 40);
+        Pokemon p1 = new Charmander();
+        Pokemon p2 = new Squirtle();
         Trainer t1 = new Trainer("Trung");
         Trainer t2 = new Trainer("Hanh");
         t1.catchPokemon(p1);

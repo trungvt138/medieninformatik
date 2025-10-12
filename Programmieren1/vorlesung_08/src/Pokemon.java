@@ -10,12 +10,12 @@ public class Pokemon {
     private List<Attack> allAttacks;
     public Trainer trainer;
 
-    public Pokemon(String name, Type type, int hp) {
+    protected Pokemon(String name, Type type, int hp) {
         this.name = name;
         this.type = type;
         this.health = hp;
         allAttacks = new ArrayList<>();
-        allAttacks.add(new Attack("Tacke", 10, Type.NORMAL));
+        allAttacks.add(new Attack("Tackle", 10, Type.NORMAL));
     }
 
     public String getName() {
