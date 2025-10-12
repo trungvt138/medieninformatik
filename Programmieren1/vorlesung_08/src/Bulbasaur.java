@@ -1,5 +1,10 @@
 public class Bulbasaur extends Pokemon {
+    protected Bulbasaur(String name, int hp) {
+        super(name, Type.GRASS, hp);
+    }
+
     public Bulbasaur() {
-        super("Bulbasaur", Type.GRASS, 40);
+        this("Bulbasaur", 40);
+        addAttack(new Attack("Vine Whip", 15, Type.GRASS));
     }
 }

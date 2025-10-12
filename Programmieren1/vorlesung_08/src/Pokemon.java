@@ -73,7 +73,7 @@ public class Pokemon {
         return this.name + " " + this.type + " " + this.lvl + " " + this.exp;
     }
 
-    private class Attack {
+    class Attack {
         private String name;
         private int damage;
         private Type type;
