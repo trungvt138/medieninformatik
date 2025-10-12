@@ -12,5 +12,8 @@ public class Main {
         System.out.println(jolly.strecke);
         System.out.println(jolly.hunger);
 
+        Pferd wendy = new Pferd("Wendy", 1.3);
+        jolly.traben();
+        wendy.traben();
     }
 }

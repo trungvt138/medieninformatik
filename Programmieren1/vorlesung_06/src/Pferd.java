@@ -14,4 +14,9 @@ public class Pferd {
         this.strecke = 0.0;
         this.hunger = false;
     }
+
+    public void traben() {
+        geschwindigkeit = Math.random() * 2;
+        System.out.printf("%s trabt %.1f Meter\n", name, strecke+=geschwindigkeit);
+    }
 }
