@@ -16,7 +16,16 @@ public class Pferd {
     }
 
     public void traben() {
-        geschwindigkeit = Math.random() * 2;
+        hunger = Math.random() < 0.5;
+        if (hunger) {
+            geschwindigkeit -= 0.1;
+        } else {
+            geschwindigkeit += 0.1;
+        }
         System.out.printf("%s trabt %.1f Meter\n", name, strecke+=geschwindigkeit);
+    }
+
+    public String toString() {
+        return String.format("%s - Gesch: %.1f Strecke: %.1f", name, geschwindigkeit, strecke);
     }
 }
