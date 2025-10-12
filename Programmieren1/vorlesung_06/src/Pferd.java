@@ -8,11 +8,10 @@ public class Pferd {
     double strecke;
     boolean hunger;
 
-    public Pferd(String name, double geschwindigkeit, double strecke, boolean hunger) {
+    public Pferd(String name, double geschwindigkeit) {
         this.name = name;
         this.geschwindigkeit = geschwindigkeit;
-        this.strecke = strecke;
-        this.hunger = hunger;
-        System.out.printf("Pferd erfolgreich erzeugt mit:\n%s, %.2f, %.2f, %s", name, geschwindigkeit, strecke, hunger);
+        this.strecke = 0.0;
+        this.hunger = false;
     }
 }
