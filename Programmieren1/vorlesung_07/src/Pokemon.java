@@ -32,10 +32,12 @@ public class Pokemon {
 
     void takeDamage(int damage) {
         this.health -= damage;
+        System.out.printf("Trainer %s: %s took %d dmg, HP left: %d\n",this.trainer.name, this.name, damage, this.health);
     }
 
     public void doDamage(Pokemon other) {
         Attack randomAttack = this.allAttacks.get((int) (Math.random() * allAttacks.size()));
+        System.out.printf("Trainer %s: %s used %s!\n",this.trainer.name, this.name, randomAttack.name);
         other.takeDamage(randomAttack.damage);
     }
 
