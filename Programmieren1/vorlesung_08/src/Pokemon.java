@@ -60,23 +60,57 @@ public class Pokemon {
 
     void takeDamage(int damage) {
         this.health -= damage;
+        if (health < 0) {
+            this.health = 0;
+        }
         System.out.printf("Trainer %s: %s took %d dmg, HP left: %d\n",this.trainer.name, this.name, damage, this.health);
+//        if (health == 0) {
+//            System.out.printf("Trainer %s: %s fainted!\n", this.trainer.name, this.name);
+//        }
+    }
+
+    public void takeDamage(Attack attack) {
+        takeDamage(attack.getDamage());
     }
 
     public void doDamage(Pokemon other) {
         Attack randomAttack = this.allAttacks.get((int) (Math.random() * allAttacks.size()));
         System.out.printf("Trainer %s: %s used %s!\n",this.trainer.name, this.name, randomAttack.name);
-        other.takeDamage(randomAttack.damage);
+        other.takeDamage(randomAttack);
     }
 
     public String toString() {
         return this.name + " " + this.type + " " + this.lvl + " " + this.exp;
     }
 
-    class Attack {
+    public static class Attack {
         private String name;
         private int damage;
         private Type type;
+
+        public Type getType() {
+            return type;
+        }
+
+        public void setType(Type type) {
+            this.type = type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getDamage() {
+            return damage;
+        }
+
+        public void setDamage(int damage) {
+            this.damage = damage;
+        }
 
         public Attack(String name, int damage, Type type) {
             this.name = name;
