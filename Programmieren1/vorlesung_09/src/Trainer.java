@@ -5,6 +5,7 @@ public class Trainer {
     public String name;
     private List<Pokemon> allMyPokemons;
     public Pokemon activePokemon;
+    public Item inventory;
 
     public Trainer(String name) {
         this.name = name;
