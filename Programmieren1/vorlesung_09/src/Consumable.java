@@ -1,7 +1,7 @@
 public class Consumable extends Item {
     protected boolean locked = false;
-    public Consumable(String name, int count, Trainer trainer) {
-        super(name, count, trainer);
+    public Consumable(String name, int count, Inventory inventory) {
+        super(name, count, inventory);
     }
 
     @Override

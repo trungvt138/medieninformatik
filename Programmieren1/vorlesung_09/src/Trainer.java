@@ -5,12 +5,13 @@ public class Trainer {
     public String name;
     private List<Pokemon> allMyPokemons;
     public Pokemon activePokemon;
-    public Item inventory;
+    public Inventory inventory;
 
     public Trainer(String name) {
         this.name = name;
         this.allMyPokemons = new ArrayList<>();
-        this.inventory = new Pokeball(1, this);
+        this.inventory = new Inventory(this, 10);
+        inventory.add(new Pokeball(1, inventory));
     }
 
     public boolean catchPokemon(Pokemon pokemon) {
@@ -18,8 +19,8 @@ public class Trainer {
             System.out.printf("Trainer %s: You can't catch other's pokemon\n", this.name);
             return false;
         }
-        if (inventory instanceof Pokeball) {
-            if (inventory.use()) {
+        if (inventory.search("Pokeball") != null) {
+            if (inventory.use(new Pokeball(1, inventory))) {
                 allMyPokemons.add(pokemon);
                 pokemon.myTrainer = this;
                 System.out.printf("Trainer %s: %s was caught!\n", this.name, pokemon.getName());

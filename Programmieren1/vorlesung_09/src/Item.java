@@ -1,12 +1,12 @@
 public class Item {
     public String name;
     protected int count;
-    protected Trainer trainer;
+    protected Inventory inventory;
 
-    public Item(String name, int count, Trainer trainer) {
+    public Item(String name, int count, Inventory inventory) {
         this.name = name;
         this.count = count;
-        this.trainer = trainer;
+        this.inventory = inventory;
     }
 
     public boolean use() {
@@ -14,12 +14,15 @@ public class Item {
             return false;
         }
         count--;
-        System.out.printf("Trainer %s used 1 %s\n", trainer.name, name);
         return true;
     }
 
     public int getCount() {
         return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public String toString() {
