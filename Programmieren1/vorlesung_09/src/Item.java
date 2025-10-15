@@ -6,6 +6,7 @@ public class Item {
     public Item(String name, int count, Trainer trainer) {
         this.name = name;
         this.count = count;
+        this.trainer = trainer;
     }
 
     public boolean use() {
@@ -13,6 +14,7 @@ public class Item {
             return false;
         }
         count--;
+        System.out.printf("Trainer %s used 1 %s\n", trainer.name, name);
         return true;
     }
 

@@ -10,14 +10,26 @@ public class Trainer {
     public Trainer(String name) {
         this.name = name;
         this.allMyPokemons = new ArrayList<>();
+        this.inventory = new Pokeball(1, this);
     }
 
-    public void catchPokemon(Pokemon pokemon) {
-        allMyPokemons.add(pokemon);
-        pokemon.myTrainer = this;
-        if (this.activePokemon == null) {
-            callPokemon();
+    public boolean catchPokemon(Pokemon pokemon) {
+        if (pokemon.myTrainer != null) {
+            System.out.printf("Trainer %s: You can't catch other's pokemon\n", this.name);
+            return false;
         }
+        if (inventory instanceof Pokeball) {
+            if (inventory.use()) {
+                allMyPokemons.add(pokemon);
+                pokemon.myTrainer = this;
+                System.out.printf("Trainer %s: %s was caught!\n", this.name, pokemon.getName());
+                if (this.activePokemon == null) {
+                    callPokemon();
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     void callPokemon() {
