@@ -1,3 +1,5 @@
+package vorlesung;
+
 public class Freund {
     public String name;
 
@@ -22,9 +24,9 @@ public class Freund {
             besterFreund = freunde[4];
             besterFreund.sayName();
         } catch (NullPointerException e) {
-            System.out.println("Freund existiert nicht! (null)");
+            System.out.println("vorlesung.Freund existiert nicht! (null)");
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("Freund nicht gefunden!");
+            System.out.println("vorlesung.Freund nicht gefunden!");
         }
 
     }

@@ -1,3 +1,5 @@
+package vorlesung;
+
 import java.util.Scanner;
 
 public class PasswortabfrageRestriktiv {
