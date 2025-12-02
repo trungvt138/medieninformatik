@@ -59,11 +59,33 @@ const state = {
 };
 
 // ====== Helpers ======
-function makeDeck(){ const d=[]; for (const g of TOYS) for (const c of COLORS) d.push({genre:g,color:c}); return d; }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-function emptyBoard(){ return Array.from({length:SIZE},()=>Array(SIZE).fill(null)); }
-function inBounds(r,c){ return r>=0 && r<SIZE && c>=0 && c<SIZE; }
-function key(r,c){ return `${r},${c}`; }
+function makeDeck() { 
+  const d=[]; 
+  for (const g of TOYS) 
+    for (const c of COLORS) 
+      d.push({genre:g, color:c, slid: false}); 
+    return d;
+}
+
+function shuffle(a) { 
+  for(let i=a.length-1;i>0;i--) { 
+    const j=Math.floor(Math.random()*(i+1)); 
+    [a[i],a[j]]=[a[j],a[i]]; 
+  } 
+  return a; 
+}
+
+function emptyBoard() { 
+  return Array.from({length:SIZE},()=>Array(SIZE).fill(null)); 
+}
+
+function inBounds(r,c) { 
+  return r>=0 && r<SIZE && c>=0 && c<SIZE;
+}
+
+function key(r,c) { 
+  return `${r},${c}`; 
+}
 
 // ====== DOM ======
 const canvas = document.getElementById("board");
@@ -267,51 +289,65 @@ canvas.addEventListener("click", (e)=>{
 function onBoardClick(r,c){
   if(state.phase === "slide"){
     const t = state.board[r][c];
-    if(t && !state.selected){
-      state.selected = {r,c};
-      computeValidDests(r,c);
-    } else if(state.selected && state.validDests.has(key(r,c))){
-      const {r:sr,c:sc} = state.selected;
-      state.board[r][c] = state.board[sr][sc];
+
+    if (t && !state.selected) {
+      if (t.slid) return;                  // ← can't slide a previously moved tile
+      state.selected = { r, c };
+      computeValidDests(r, c);
+    } 
+    else if(state.selected && state.validDests.has(key(r,c))) {
+      // perform slide
+      const { r: sr, c: sc } = state.selected;
+      const moved = state.board[sr][sc];
+      state.board[r][c] = moved;
       state.board[sr][sc] = null;
-      state.selected = null; state.validDests.clear();
-      state.phase = "place"; state.selectedDisplay = null;
+
+      // mark as frozen (cannot be slid again)
+      if (state.board[r][c]) state.board[r][c].slid = true;   // ← add this
+
+      state.selected = null;
+      state.validDests.clear();
+      state.phase = 'place';
+      state.selectedDisplay = null;
     } else {
       state.selected = null; state.validDests.clear();
     }
   } else if (state.phase === 'place') {
-  const t = state.board[r][c];
+      const t = state.board[r][c];
 
-  // If you click an existing tile (and haven't picked from display),
-  // switch to slide mode and start sliding that tile.
-  if (t && state.selectedDisplay == null) {
-    state.phase = 'slide';
-    state.selected = { r, c };
-    computeValidDests(r, c);
-    render();
-    setStatus();
-    return; // stop here; don't try to place
-  }
+      // If you click an existing tile (and haven't picked from display),
+      // switch to slide mode and start sliding that tile.
+      if (t && state.selectedDisplay == null) {
+        if (t.slid) return;
+        state.phase = 'slide';
+        state.selected = { r, c };
+        computeValidDests(r, c);
+        render();
+        setStatus();
+        return; // stop here; don't try to place
+      }
 
   // (placing) click an empty cell *after* choosing a display tile
-  if (state.board[r][c] === null && state.selectedDisplay != null) {
-    state.board[r][c] = state.display[state.selectedDisplay];
-    state.display.splice(state.selectedDisplay, 1);
-    drawFromSupplyToDisplay();
-    state.selectedDisplay = null;
+    if (state.board[r][c] === null && state.selectedDisplay != null) {
+      state.board[r][c] = state.display[state.selectedDisplay];
+      state.display.splice(state.selectedDisplay, 1);
+      drawFromSupplyToDisplay();
+      state.selectedDisplay = null;
 
-    if (boardFull()) {
-      endAndScore();
-    } else {
-      // next player — keep turns starting in PLACE so slide remains optional
-      state.current = 1 - state.current;
-      state.phase = 'place';
-      state.selected = null;
-      state.validDests.clear();
+      if (boardFull()) {
+        endAndScore();
+      } else {
+        // next player — keep turns starting in PLACE so slide remains optional
+        state.current = 1 - state.current;
+        state.phase = 'place';
+        state.selected = null;
+        state.validDests.clear();
+      }
     }
   }
-}
-  renderDisplay(); render(); setStatus();
+  renderDisplay(); 
+  render(); 
+  setStatus();
 }
 
 function computeValidDests(r,c){
