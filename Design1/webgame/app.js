@@ -139,20 +139,47 @@ function drawFromSupplyToDisplay(){
 }
 
 function showFocusDialog(){
-  const dlg = document.getElementById("focusDialog");
-  if (!dlg || !dlg.showModal) return; // skip if dialog not present
+  const dlg = document.getElementById('focusDialog');
   dlg.showModal();
-  const startBtn = document.getElementById("startBtn");
-  if (startBtn){
-    startBtn.onclick = () => {
-      const p1 = document.querySelector('input[name="p1"]:checked')?.value || "genre";
-      const p2 = document.querySelector('input[name="p2"]:checked')?.value || "color";
-      state.focuses = [p1,p2];
-      dlg.close();
-      setStatus();
-    };
-  }
+
+  const p1Radios = [...document.querySelectorAll('input[name="p1"]')];
+  const p2Radios = [...document.querySelectorAll('input[name="p2"]')];
+
+  // Ensure the two choices are always opposites
+  const enforceOpposites = (whoChanged) => {
+    const p1 = document.querySelector('input[name="p1"]:checked')?.value;
+    const p2 = document.querySelector('input[name="p2"]:checked')?.value;
+    if (!p1 || !p2) return;
+
+    if (p1 === p2) {
+      if (whoChanged === 'p1') {
+        // flip player 2
+        const target = p1 === 'genre' ? 'color' : 'genre';
+        const r = document.querySelector(`input[name="p2"][value="${target}"]`);
+        if (r) r.checked = true;
+      } else {
+        // flip player 1
+        const target = p2 === 'genre' ? 'color' : 'genre';
+        const r = document.querySelector(`input[name="p1"][value="${target}"]`);
+        if (r) r.checked = true;
+      }
+    }
+  };
+
+  p1Radios.forEach(r => r.addEventListener('change', () => enforceOpposites('p1')));
+  p2Radios.forEach(r => r.addEventListener('change', () => enforceOpposites('p2')));
+
+  // Start button: final guard + apply to state
+  document.getElementById('startBtn').onclick = () => {
+    let p1 = document.querySelector('input[name="p1"]:checked')?.value || 'genre';
+    let p2 = document.querySelector('input[name="p2"]:checked')?.value || 'color';
+    if (p1 === p2) p2 = (p1 === 'genre') ? 'color' : 'genre'; // final safety
+    state.focuses = [p1, p2];
+    dlg.close();
+    setStatus();
+  };
 }
+
 
 // ====== Sizing ======
 function sizeBoardToContainer(){
