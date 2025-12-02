@@ -279,37 +279,37 @@ function onBoardClick(r,c){
       state.selected = null; state.validDests.clear();
     }
   } else if (state.phase === 'place') {
-    const t = state.board[r][c];
+  const t = state.board[r][c];
 
-    // If you click an existing tile (and haven't picked from display),
-    // switch to slide mode and start sliding that tile.
-    if (t && state.selectedDisplay == null) {
-      state.phase = 'slide';
-      state.selected = { r, c };
-      computeValidDests(r, c);
-      render();
-      setStatus();
-      return; // stop here; don't try to place
-    }
+  // If you click an existing tile (and haven't picked from display),
+  // switch to slide mode and start sliding that tile.
+  if (t && state.selectedDisplay == null) {
+    state.phase = 'slide';
+    state.selected = { r, c };
+    computeValidDests(r, c);
+    render();
+    setStatus();
+    return; // stop here; don't try to place
+  }
 
-    // (placing) click an empty cell *after* choosing a display tile
-    if (state.board[r][c] === null && state.selectedDisplay != null) {
-      state.board[r][c] = state.display[state.selectedDisplay];
-      state.display.splice(state.selectedDisplay, 1);
-      drawFromSupplyToDisplay();
-      state.selectedDisplay = null;
+  // (placing) click an empty cell *after* choosing a display tile
+  if (state.board[r][c] === null && state.selectedDisplay != null) {
+    state.board[r][c] = state.display[state.selectedDisplay];
+    state.display.splice(state.selectedDisplay, 1);
+    drawFromSupplyToDisplay();
+    state.selectedDisplay = null;
 
-      if (boardFull()) {
-        endAndScore();
-      } else {
-        // next player — keep turns starting in PLACE so slide remains optional
-        state.current = 1 - state.current;
-        state.phase = 'place';
-        state.selected = null;
-        state.validDests.clear();
-      }
+    if (boardFull()) {
+      endAndScore();
+    } else {
+      // next player — keep turns starting in PLACE so slide remains optional
+      state.current = 1 - state.current;
+      state.phase = 'place';
+      state.selected = null;
+      state.validDests.clear();
     }
   }
+}
   renderDisplay(); render(); setStatus();
 }
 
@@ -339,15 +339,25 @@ function renderDisplay(){
     drawTile(c2, 10, 5, 100, t, false);
     div.appendChild(canv);
 
-    div.onclick = ()=>{
-      // Selecting a display tile always allows placing (skip slide if we were in 'slide')
+    div.onclick = () => {
+  // Toggle: select → place mode, click again → deselect and back to slide mode
+    if (state.selectedDisplay === idx) {
+      // unselect → allow sliding again
+      state.selectedDisplay = null;
+      state.selected = null;
+      state.validDests.clear();
+      state.phase = 'slide';
+    } else {
+      // select this tile → prepare to place
+      state.selectedDisplay = idx;
       state.selected = null;
       state.validDests.clear();
       state.phase = 'place';
-      state.selectedDisplay = idx;
-      renderDisplay();
-      setStatus();
-    };
+    }
+    renderDisplay();
+    render();
+    setStatus();
+  };
     displayEl.appendChild(div);
   });
   updateSupplyBadge();
