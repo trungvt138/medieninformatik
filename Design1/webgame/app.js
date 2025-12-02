@@ -130,6 +130,7 @@ function newGame(){
   if (iconsReady) render();
   showFocusDialog();
   setStatus();
+  updateLiveScore();
 }
 
 function drawFromSupplyToDisplay(){
@@ -177,6 +178,7 @@ function showFocusDialog(){
     state.focuses = [p1, p2];
     dlg.close();
     setStatus();
+    updateLiveScore();
   };
 }
 
@@ -437,6 +439,22 @@ function updateSupplyBadge() {
     supplyBadge.textContent = `Supply: ${state.supply.length}`; 
 }
 
+function updateLiveScore(){
+  const s1 = computeScoreFor(0);
+  const s2 = computeScoreFor(1);
+
+  const p1ScoreEl = document.getElementById('p1Score');
+  const p2ScoreEl = document.getElementById('p2Score');
+  const p1FocusEl = document.getElementById('p1Focus');
+  const p2FocusEl = document.getElementById('p2Focus');
+
+  if (p1ScoreEl) p1ScoreEl.textContent = s1.total;
+  if (p2ScoreEl) p2ScoreEl.textContent = s2.total;
+  if (p1FocusEl) p1FocusEl.textContent = `P1: ${s1.focus === 'genre' ? 'Genres' : 'Colors'}`;
+  if (p2FocusEl) p2FocusEl.textContent = `P2: ${s2.focus === 'genre' ? 'Genres' : 'Colors'}`;
+}
+
+
 // ====== Status & Scoring ======
 function setStatus(){
   const p = state.current+1;
@@ -444,6 +462,7 @@ function setStatus(){
   const phase = state.phase==="slide" ? "Slide a toy" : (state.selectedDisplay==null ? "Place: select a display tile" : "Place: click an empty cell");
   const el = document.getElementById("status");
   if (el) el.textContent = `Player ${p} · Focus: ${focus} · ${phase}`;
+  updateLiveScore();
 }
 
 function computeScoreFor(playerIdx){

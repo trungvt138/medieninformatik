@@ -39,16 +39,23 @@
         <div class="display" id="display"></div>
       </div>
 
-      <div class="card pad legend">
-        <div>
-          <div class="pill legend-title">Toys</div>
-          <div>Robot 🤖 · Dino 🦖 · Car 🚗 · Doll 🧸 · Puzzle 🧩 · Ball ⚽</div>
-        </div>
-        <div>
-          <div class="pill legend-title">Colors</div>
-          <div>Red · Orange · Yellow · Green · Blue · Purple</div>
+      <div class="card pad" id="liveScoreCard">
+      <div class="row" style="justify-content:space-between; align-items:center;">
+        <div class="pill">Live Score</div>
+        <div class="row">
+          <span class="badge" id="p1Focus">P1: Genres</span>
+          <span class="badge" id="p2Focus">P2: Colors</span>
         </div>
       </div>
+
+      <div class="row" style="justify-content:space-between; margin-top:10px;">
+        <div><b>Player 1</b> <span class="badge" id="p1Score">0</span></div>
+        <div><b>Player 2</b> <span class="badge" id="p2Score">0</span></div>
+      </div>
+
+      <div class="hint" id="scoreHint" style="margin-top:8px;">Updates after every action.</div>
+    </div>
+
 
       <div class="card pad">
         <div class="pill">Turn Flow</div>
