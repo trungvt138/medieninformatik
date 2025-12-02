@@ -235,19 +235,20 @@ function drawImageContain(ctx, img, dx, dy, dw, dh) {
 }
 
 function drawTile(ctx, x, y, size, tile, selected=false){
-  // tile card
+  // card background
   roundRect(ctx, x+6, y+6, size-12, size-12, 14, '#f4f5f6', '#0f1218', 2);
 
-  // icon only — force-fit into inner box with a small margin
-  const inset = Math.floor(size * 0.10);
+  // icon box — increase inset so the picture sits further from the border
+  const inset = Math.floor(size * 0.12);   // <-- was size * 0.06 or 0.10
   const boxX = x + inset, boxY = y + inset;
   const boxW = size - inset * 2, boxH = size - inset * 2;
 
   const img = ICONS.get(keyIcon(tile.genre, tile.color));
   drawImageContain(ctx, img, boxX, boxY, boxW, boxH);
 
-  if(selected){
-    ctx.strokeStyle = '#6ea8fe'; ctx.lineWidth = 3; ctx.strokeRect(x+4,y+4,size-8,size-8);
+  if (selected) {
+    ctx.strokeStyle = '#6ea8fe'; ctx.lineWidth = 3;
+    ctx.strokeRect(x+4, y+4, size-8, size-8);
   }
 }
 
@@ -334,9 +335,15 @@ function renderDisplay(){
     const div = document.createElement("div");
     div.className = "slot" + (state.selectedDisplay===idx ? " sel":"" );
     div.title = `${t.genre} — ${t.color}`;
-    const canv = document.createElement("canvas"); canv.width=120; canv.height=90;
-    const c2 = canv.getContext("2d");
-    drawTile(c2, 10, 5, 100, t, false);
+
+    const canv = document.createElement('canvas');
+    const PREV = 104;          // fits neatly inside 112px slot with padding
+    const PAD  = 10;            // margin inside the preview
+    canv.width = PREV;
+    canv.height = PREV;
+    const c2 = canv.getContext('2d');
+    drawTile(c2, PAD, PAD, PREV - PAD*2, t, false);
+
     div.appendChild(canv);
 
     div.onclick = () => {
@@ -362,7 +369,10 @@ function renderDisplay(){
   });
   updateSupplyBadge();
 }
-function updateSupplyBadge(){ if(supplyBadge) supplyBadge.textContent = `Supply: ${state.supply.length}`; }
+function updateSupplyBadge() { 
+  if(supplyBadge) 
+    supplyBadge.textContent = `Supply: ${state.supply.length}`; 
+}
 
 // ====== Status & Scoring ======
 function setStatus(){
