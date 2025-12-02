@@ -526,14 +526,10 @@ function renderGroupList(groups){
 // ====== Buttons ======
 const newBtn = document.getElementById("newBtn");
 const rulesBtn = document.getElementById("rulesBtn");
-const scoreBtn = document.getElementById("scoreBtn");
 if (newBtn) newBtn.onclick = newGame;
 if (rulesBtn) rulesBtn.onclick = ()=>{ const d=document.getElementById("rulesDialog"); if(d&&d.showModal) d.showModal(); };
 const closeRules = document.getElementById("closeRules");
 if (closeRules) closeRules.onclick = ()=>{ const d=document.getElementById("rulesDialog"); if(d&&d.close) d.close(); };
-if (scoreBtn) scoreBtn.onclick = ()=>{ const s1=computeScoreFor(0), s2=computeScoreFor(1); showScoreModal(s1,s2,"Current Board"); };
-const closeScore = document.getElementById("closeScore");
-if (closeScore) closeScore.onclick = ()=>{ const d=document.getElementById("scoreDialog"); if(d&&d.close) d.close(); };
 
 // ====== Kickoff (preload icons first) ======
 preloadIcons().then(newGame);
