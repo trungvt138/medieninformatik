@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Stacks & Stories — A Midnight Library Game</title>
+  <title>Toy Shop Tussle — A Toy Store Game</title>
+  <!-- Your external stylesheet -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="card">
     <div>
-      <h1>Stacks & Stories</h1>
-      <div class="sub">A Midnight Library Game · 6×6 board · slide & shelve · score by Genre or Jacket Color</div>
+      <h1>Toy Shop Tussle</h1>
+      <div class="sub">A Toy Store Game · 6×6 board · slide & place · score by Toys or Colors</div>
     </div>
     <div class="toolbar">
       <button id="newBtn" class="btn-primary">New Game</button>
@@ -20,58 +21,64 @@
   </header>
 
   <main class="wrap">
-    <section class="card pad" style="display:grid; gap:12px; align-content:start;">
+    <!-- LEFT: Board -->
+    <section class="card pad board-section">
       <div id="boardContainer">
         <canvas id="board" width="720" height="720"></canvas>
       </div>
       <div class="status" id="status"></div>
     </section>
 
+    <!-- RIGHT: Sidebar -->
     <aside class="side">
       <div class="card pad">
-        <div class="row" style="justify-content:space-between;">
-          <div>
-            <div class="pill">Display (incoming returns)</div>
-          </div>
-          <div class="row">
-            <span class="badge" id="supplyBadge">Supply: 36</span>
-          </div>
+        <div class="row sidebar-head">
+          <div class="pill">Display (new arrivals)</div>
+          <span class="badge" id="supplyBadge">Supply: 36</span>
         </div>
         <div class="display" id="display"></div>
       </div>
 
       <div class="card pad legend">
         <div>
-          <div class="pill" style="margin-bottom:8px;">Genres</div>
-          <div>Mystery 🔍 · Fantasy ✨ · Science ⚛︎ · History 📖 · Romance ♥ · Horror 👻</div>
+          <div class="pill legend-title">Toys</div>
+          <div>Robot 🤖 · Dino 🦖 · Car 🚗 · Doll 🧸 · Puzzle 🧩 · Ball ⚽</div>
         </div>
         <div>
-          <div class="pill" style="margin-bottom:8px;">Jacket Colors</div>
-          <div>Red · Yellow · Green · Blue · Purple · Teal</div>
+          <div class="pill legend-title">Colors</div>
+          <div>Red · Orange · Yellow · Green · Blue · Purple</div>
         </div>
       </div>
 
       <div class="card pad">
-        <div class="pill" style="margin-bottom:8px;">Turn Flow</div>
-        <div class="hint">1) Slide exactly 1 book along its row/column until blocked. 2) Shelve exactly 1 book from the display into any empty space. Then refill the display.</div>
+        <div class="pill">Turn Flow</div>
+        <div class="hint">
+          1) Slide exactly 1 toy along its row/column until blocked.
+          2) Place exactly 1 toy from the display into any empty space.
+          Then refill the display.
+        </div>
       </div>
     </aside>
   </main>
 
+  <!-- Focus modal -->
   <dialog id="focusDialog">
     <div class="modal-head">Choose each player’s scoring focus</div>
     <div class="modal-body">
-      <p class="hint">Each player secretly focuses on <b>Genres</b> or <b>Jacket Colors</b>. The chosen focus determines what clusters they score.</p>
+      <p class="hint">
+        Each player secretly focuses on <b>Toys</b> or <b>Colors</b>. The chosen
+        focus determines what clusters they score.
+      </p>
       <div class="hr"></div>
       <div class="choice">
         <div>
           <h3>Player 1</h3>
-          <label><input type="radio" name="p1" value="genre" checked> Genres</label>
+          <label><input type="radio" name="p1" value="genre" checked> Toys</label>
           <label><input type="radio" name="p1" value="color"> Colors</label>
         </div>
         <div>
           <h3>Player 2</h3>
-          <label><input type="radio" name="p2" value="genre"> Genres</label>
+          <label><input type="radio" name="p2" value="genre"> Toys</label>
           <label><input type="radio" name="p2" value="color" checked> Colors</label>
         </div>
       </div>
@@ -81,22 +88,27 @@
     </div>
   </dialog>
 
+  <!-- Rules modal -->
   <dialog id="rulesDialog">
     <div class="modal-head">Rules (short)</div>
     <div class="modal-body">
-      <p><b>Story.</b> Past midnight, the stacks stir. You guide the motion: slide books down clear aisles and shelve new returns to grow your favored collections.</p>
+      <p><b>Story.</b> Two friends are racing through a toy store. One loves collecting
+        <b>different colors of the same toy</b>. The other loves collecting
+        <b>different toys in the same color</b>. Slide toys along clear aisles and place new arrivals to build your collection.</p>
       <ul>
-        <li><b>Board:</b> 6×6. <b>Tiles:</b> 36 (6 Genres × 6 Jacket Colors). <b>Display:</b> 6 tiles.</li>
-        <li><b>Your turn:</b> (1) <b>Slide</b> exactly 1 book along its row/column any distance until blocked. (2) <b>Shelve</b> exactly 1 book from the display into any empty space. Refill the display.</li>
-        <li><b>Focus:</b> Each player scores only contiguous (orthogonal) groups that match their <i>Genres</i> or <i>Colors</i> focus.</li>
+        <li><b>Board:</b> 6×6. <b>Tiles:</b> 36 (6 Toys × 6 Colors). <b>Display:</b> 6 tiles.</li>
+        <li><b>Your turn:</b> (1) <b>Slide</b> exactly 1 toy along its row/column any distance until blocked.
+            (2) <b>Place</b> exactly 1 toy from the display into any empty space. Refill the display.</li>
+        <li><b>Focus:</b> Each player scores only contiguous (orthogonal) groups that match their focus: <i>Toys</i> or <i>Colors</i>.</li>
         <li><b>Points per group size:</b> 2→1, 3→3, 4→6, 5→10, 6→15.</li>
         <li><b>End:</b> When the board is full, compute scores.</li>
       </ul>
-      <p class="hint">Tip: Slide to open a lane, then shelve to touch multiple clusters at once.</p>
+      <p class="hint">Tip: Open a lane with your slide, then place to touch multiple clusters at once.</p>
     </div>
     <div class="modal-foot"><button id="closeRules">Close</button></div>
   </dialog>
 
+  <!-- Score modal -->
   <dialog id="scoreDialog">
     <div class="modal-head">Scores</div>
     <div class="modal-body">
@@ -105,6 +117,7 @@
     <div class="modal-foot"><button id="closeScore">Close</button></div>
   </dialog>
 
+  <!-- Game logic that loads 0000…0035 sliced icons -->
   <script src="app.js" defer></script>
 </body>
 </html>

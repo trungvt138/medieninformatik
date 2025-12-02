@@ -46,20 +46,24 @@ header .sub {
   font-size: 13px; 
 }
 
-.wrap { 
-  display: grid; 
-  grid-template-columns: 1fr 320px; 
-  gap: 16px; 
-  padding: 16px; 
+.wrap {
+  display: grid;
+  grid-template-columns: max-content 320px; /* left column hugs the board card */
+  gap: 16px;
+  padding: 16px;
+  justify-content: center;                  /* center both columns on the page */
 }
+
 
 @media (max-width: 900px) {
   .wrap { 
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
+    #boardContainer { width: min(92vw, 640px); }
   }
 }
 
 .card { 
+  overflow: hidden;
   background: var(--panel); 
   border: 1px solid #20242e; 
   border-radius: 16px; 
@@ -104,12 +108,12 @@ button:active {
   background: #344469; 
 }
 
-#boardContainer { 
-  position: relative; 
-  aspect-ratio: 1 / 1; 
-  width: min(90vw, 720px); 
-  max-width: 720px; 
-  margin: 0 auto; 
+#boardContainer {
+  position: relative;
+  aspect-ratio: 1 / 1;          /* keep the box square */
+  width: min(70vw, 560px);      /* modest size on desktop */
+  max-width: 560px;
+  margin: 0 auto;
 }
 
 #board { 
@@ -246,4 +250,11 @@ dialog::backdrop {
   height: 1px;
   background: #242b39; 
   margin: 12px 0; 
+}
+
+/* the first card (board area) should only be as wide as its contents */
+main .card.pad:first-child {
+  width: fit-content;        /* shrink-to-fit */
+  max-width: 620px;          /* cap so it never gets huge */
+  margin: 0 auto;            /* keep it centered within the grid cell */
 }
