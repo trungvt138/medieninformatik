@@ -124,6 +124,10 @@ function newGame(){
   showFocusDialog();
   setStatus();
   updateLiveScore();
+  
+  if (!withFocusDialog) {
+    showTurnBanner(state.current); // NEW: announce turn when skipping dialog
+  }
 }
 
 function drawFromSupplyToDisplay(){
@@ -169,6 +173,7 @@ function showFocusDialog(){
     dlg.close();
     setStatus();
     updateLiveScore();
+    showTurnBanner(state.current);
   };
 }
 
@@ -373,6 +378,7 @@ function onBoardClick(r,c){
         state.selected = null;
         state.validDests.clear();
         state.hasSlidThisTurn = false;   // reset for next player
+        showTurnBanner(state.current);
       }
     }
   }
@@ -554,6 +560,29 @@ function openFocusForNewGame(){
     };
   }
 }
+
+function showTurnBanner(playerIndex) {
+  const overlay = document.getElementById('turnBanner');
+  const strip   = overlay?.querySelector('.banner-strip');
+  const label   = document.getElementById('turnBannerText');
+  if (!overlay || !strip || !label) return;
+
+  label.textContent = `Player ${playerIndex + 1}'s Turn`;
+  overlay.style.display = 'block';
+
+  // retrigger CSS animation
+  strip.classList.remove('run');
+  // force reflow
+  // eslint-disable-next-line no-unused-expressions
+  strip.offsetWidth;
+  strip.classList.add('run');
+
+  strip.addEventListener('animationend', () => {
+    overlay.style.display = 'none';
+    strip.classList.remove('run');
+  }, { once: true });
+}
+
 
 // ====== Buttons ======
 const newBtn = document.getElementById("newBtn");
