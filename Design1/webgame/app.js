@@ -529,6 +529,32 @@ function renderGroupList(groups){
   return '<ul>' + groups.map(g=>`<li>${g.size} in ${g.attr} → ${g.pts} pts</li>`).join('') + '</ul>';
 }
 
+function openFocusForNewGame(){
+  const dlg = document.getElementById('focusDialog');
+  if (!dlg || !dlg.showModal) { 
+    // Fallback: if the dialog isn’t on this page, just start a fresh game
+    newGame(true);
+    return;
+  }
+
+  // Re-show the same focus dialog the app uses on first load
+  dlg.showModal();
+
+  // Reuse your mutual-exclusion listeners already attached in showFocusDialog()
+  // We just redefine Start to apply choices and then start a fresh board.
+  const startBtn = document.getElementById('startBtn');
+  if (startBtn) {
+    startBtn.onclick = () => {
+      let p1 = document.querySelector('input[name="p1"]:checked')?.value || 'genre';
+      let p2 = document.querySelector('input[name="p2"]:checked')?.value || 'color';
+      if (p1 === p2) p2 = (p1 === 'genre') ? 'color' : 'genre';
+      state.focuses = [p1, p2];
+      dlg.close();
+      newGame(false); // focuses already chosen; don’t show the dialog again
+    };
+  }
+}
+
 // ====== Buttons ======
 const newBtn = document.getElementById("newBtn");
 const rulesBtn = document.getElementById("rulesBtn");
@@ -536,6 +562,21 @@ if (newBtn) newBtn.onclick = newGame;
 if (rulesBtn) rulesBtn.onclick = ()=>{ const d=document.getElementById("rulesDialog"); if(d&&d.showModal) d.showModal(); };
 const closeRules = document.getElementById("closeRules");
 if (closeRules) closeRules.onclick = ()=>{ const d=document.getElementById("rulesDialog"); if(d&&d.close) d.close(); };
+
+// Close button in Scores dialog (if not already wired)
+const closeScore = document.getElementById("closeScore");
+if (closeScore) closeScore.onclick = () => {
+  const d = document.getElementById("scoreDialog");
+  if (d && d.close) d.close();
+};
+
+// New Match: close results, then open focus picker
+const newMatchBtn = document.getElementById("newMatchBtn");
+if (newMatchBtn) newMatchBtn.onclick = () => {
+  const d = document.getElementById("scoreDialog");
+  if (d && d.close) d.close();
+  openFocusForNewGame();   // ← show criteria dialog now
+};
 
 // ====== Kickoff (preload icons first) ======
 preloadIcons().then(newGame);
