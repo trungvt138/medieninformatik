@@ -1,6 +1,10 @@
+// ==============================
+// Toy Shop Tussle — app.js
+// ==============================
+
 // ====== Toys, Colors, and Sliced Icon Files ======
 const TOYS   = ["Robot","Dino","Car","Doll","Puzzle","Ball"];           // rows (top→bottom)
-const COLORS = ["Red","Orange","Yellow","Green","Blue","Purple"];       // UI order
+const COLORS = ["Orange","Red","Yellow","Green","Blue","Purple"];       // UI / column order
 
 // Files live at: assets/sliced/_0000_Robot_Orange.png … _0035_Ball_Purple.png
 // Folder index order (by color column):
@@ -44,48 +48,35 @@ const keyIcon = (toy, color) => `${toy}|${color}`;
 // ====== Game constants ======
 const SIZE = 6; // 6x6 board
 const SCORE_TABLE = { 2:1, 3:3, 4:6, 5:10, 6:15 };
+const ICON_PADDING = 0.12; // space inside tile around icon
 
 // ====== State ======
 const state = {
-  board: null,
+  board: null,              // 6x6 of tiles or null
   supply: [],
   display: [],
-  focuses: ["genre","color"],  // 'genre' means toy-type groups; 'color' means color groups
+  focuses: ["genre","color"],  // 'genre' = toy-type groups; 'color' = color groups
   current: 0,
-  phase: "place",
-  selected: null,
-  validDests: new Set(),
-  selectedDisplay: null
+  phase: "place",           // "slide" | "place"
+  selected: null,           // {r,c} tile selected for sliding
+  validDests: new Set(),    // "r,c"
+  selectedDisplay: null,    // index in display for placing
+  hasSlidThisTurn: false    // at most one slide per turn (optional)
 };
 
 // ====== Helpers ======
-function makeDeck() { 
-  const d=[]; 
-  for (const g of TOYS) 
-    for (const c of COLORS) 
-      d.push({genre:g, color:c, slid: false}); 
-    return d;
+function makeDeck() {
+  const d = [];
+  // Note: no "slid" flags here; sliding is tracked per-turn only.
+  for (const g of TOYS)
+    for (const c of COLORS)
+      d.push({ genre: g, color: c });
+  return d;
 }
-
-function shuffle(a) { 
-  for(let i=a.length-1;i>0;i--) { 
-    const j=Math.floor(Math.random()*(i+1)); 
-    [a[i],a[j]]=[a[j],a[i]]; 
-  } 
-  return a; 
-}
-
-function emptyBoard() { 
-  return Array.from({length:SIZE},()=>Array(SIZE).fill(null)); 
-}
-
-function inBounds(r,c) { 
-  return r>=0 && r<SIZE && c>=0 && c<SIZE;
-}
-
-function key(r,c) { 
-  return `${r},${c}`; 
-}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function emptyBoard(){ return Array.from({length:SIZE},()=>Array(SIZE).fill(null)); }
+function inBounds(r,c){ return r>=0 && r<SIZE && c>=0 && c<SIZE; }
+function key(r,c){ return `${r},${c}`; }
 
 // ====== DOM ======
 const canvas = document.getElementById("board");
@@ -124,6 +115,8 @@ function newGame(){
   state.current = 0;
   state.phase = "place";
   state.selected = null; state.validDests.clear(); state.selectedDisplay = null;
+  state.hasSlidThisTurn = false;
+
   updateSupplyBadge();
   renderDisplay();
   sizeBoardToContainer();
@@ -139,27 +132,25 @@ function drawFromSupplyToDisplay(){
   }
 }
 
+// ====== Focus selection (mutually exclusive) ======
 function showFocusDialog(){
   const dlg = document.getElementById('focusDialog');
+  if (!dlg || !dlg.showModal) return;
   dlg.showModal();
 
   const p1Radios = [...document.querySelectorAll('input[name="p1"]')];
   const p2Radios = [...document.querySelectorAll('input[name="p2"]')];
 
-  // Ensure the two choices are always opposites
   const enforceOpposites = (whoChanged) => {
     const p1 = document.querySelector('input[name="p1"]:checked')?.value;
     const p2 = document.querySelector('input[name="p2"]:checked')?.value;
     if (!p1 || !p2) return;
-
     if (p1 === p2) {
       if (whoChanged === 'p1') {
-        // flip player 2
         const target = p1 === 'genre' ? 'color' : 'genre';
         const r = document.querySelector(`input[name="p2"][value="${target}"]`);
         if (r) r.checked = true;
       } else {
-        // flip player 1
         const target = p2 === 'genre' ? 'color' : 'genre';
         const r = document.querySelector(`input[name="p1"][value="${target}"]`);
         if (r) r.checked = true;
@@ -170,18 +161,16 @@ function showFocusDialog(){
   p1Radios.forEach(r => r.addEventListener('change', () => enforceOpposites('p1')));
   p2Radios.forEach(r => r.addEventListener('change', () => enforceOpposites('p2')));
 
-  // Start button: final guard + apply to state
   document.getElementById('startBtn').onclick = () => {
     let p1 = document.querySelector('input[name="p1"]:checked')?.value || 'genre';
     let p2 = document.querySelector('input[name="p2"]:checked')?.value || 'color';
-    if (p1 === p2) p2 = (p1 === 'genre') ? 'color' : 'genre'; // final safety
+    if (p1 === p2) p2 = (p1 === 'genre') ? 'color' : 'genre';
     state.focuses = [p1, p2];
     dlg.close();
     setStatus();
     updateLiveScore();
   };
 }
-
 
 // ====== Sizing ======
 function sizeBoardToContainer(){
@@ -289,8 +278,8 @@ function drawTile(ctx, x, y, size, tile, selected=false){
   // card background
   roundRect(ctx, x+6, y+6, size-12, size-12, 14, '#f4f5f6', '#0f1218', 2);
 
-  // icon box — increase inset so the picture sits further from the border
-  const inset = Math.floor(size * 0.12);   // <-- was size * 0.06 or 0.10
+  // icon box — margin inside the card
+  const inset = Math.floor(size * ICON_PADDING);
   const boxX = x + inset, boxY = y + inset;
   const boxW = size - inset * 2, boxH = size - inset * 2;
 
@@ -317,48 +306,60 @@ canvas.addEventListener("click", (e)=>{
 
 function onBoardClick(r,c){
   if(state.phase === "slide"){
+    // If you've already slid this turn, force place phase
+    if (state.hasSlidThisTurn) {
+      state.phase = 'place';
+      state.selected = null;
+      state.validDests.clear();
+      setStatus(); render();
+      return;
+    }
+
     const t = state.board[r][c];
 
     if (t && !state.selected) {
-      if (t.slid) return;                  // ← can't slide a previously moved tile
+      // start selecting this tile to slide
       state.selected = { r, c };
       computeValidDests(r, c);
     } 
     else if(state.selected && state.validDests.has(key(r,c))) {
-      // perform slide
+      // perform slide to destination
       const { r: sr, c: sc } = state.selected;
       const moved = state.board[sr][sc];
       state.board[r][c] = moved;
       state.board[sr][sc] = null;
 
-      // mark as frozen (cannot be slid again)
-      if (state.board[r][c]) state.board[r][c].slid = true;   // ← add this
+      // mark that we've slid this turn
+      state.hasSlidThisTurn = true;
 
+      // end slide, switch to place
       state.selected = null;
       state.validDests.clear();
       state.phase = 'place';
       state.selectedDisplay = null;
     } else {
+      // click elsewhere cancels selection
       state.selected = null; state.validDests.clear();
     }
   } else if (state.phase === 'place') {
-      const t = state.board[r][c];
+    const t = state.board[r][c];
 
-      // If you click an existing tile (and haven't picked from display),
-      // switch to slide mode and start sliding that tile.
-      if (t && state.selectedDisplay == null) {
-        if (t.slid) return;
-        state.phase = 'slide';
-        state.selected = { r, c };
-        computeValidDests(r, c);
-        render();
-        setStatus();
-        return; // stop here; don't try to place
-      }
+    // Click a board tile to start sliding — only if you haven't slid this turn
+    if (t && !state.hasSlidThisTurn) {
+      state.selectedDisplay = null;   // auto-unselect any display pick
+      state.phase = 'slide';
+      state.selected = { r, c };
+      computeValidDests(r, c);
+      render();
+      setStatus();
+      return; // don't try to place on this click
+    }
 
-  // (placing) click an empty cell *after* choosing a display tile
+    // placing onto an empty cell requires a selected display tile
     if (state.board[r][c] === null && state.selectedDisplay != null) {
-      state.board[r][c] = state.display[state.selectedDisplay];
+      const src = state.display[state.selectedDisplay];
+      state.board[r][c] = { ...src };  // placed tiles are always movable later
+
       state.display.splice(state.selectedDisplay, 1);
       drawFromSupplyToDisplay();
       state.selectedDisplay = null;
@@ -366,11 +367,12 @@ function onBoardClick(r,c){
       if (boardFull()) {
         endAndScore();
       } else {
-        // next player — keep turns starting in PLACE so slide remains optional
+        // next player — start in PLACE; slide remains optional
         state.current = 1 - state.current;
         state.phase = 'place';
         state.selected = null;
         state.validDests.clear();
+        state.hasSlidThisTurn = false;   // reset for next player
       }
     }
   }
@@ -381,6 +383,7 @@ function onBoardClick(r,c){
 
 function computeValidDests(r,c){
   state.validDests.clear();
+  // scan in 4 directions until blocked; add empty cells along clear path
   const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
   for(const [dr,dc] of dirs){
     let nr=r+dr, nc=c+dc;
@@ -390,7 +393,10 @@ function computeValidDests(r,c){
     }
   }
 }
-function boardFull(){ for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(!state.board[r][c]) return false; return true; }
+function boardFull(){
+  for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(!state.board[r][c]) return false;
+  return true;
+}
 
 // ====== Display panel ======
 function renderDisplay(){
@@ -402,8 +408,8 @@ function renderDisplay(){
     div.title = `${t.genre} — ${t.color}`;
 
     const canv = document.createElement('canvas');
-    const PREV = 104;          // fits neatly inside 112px slot with padding
-    const PAD  = 10;            // margin inside the preview
+    const PREV = 104;   // fits neatly in a ~112px square slot with padding
+    const PAD  = 10;    // inner margin
     canv.width = PREV;
     canv.height = PREV;
     const c2 = canv.getContext('2d');
@@ -411,34 +417,33 @@ function renderDisplay(){
 
     div.appendChild(canv);
 
+    // Toggle: select to place; click again to unselect & allow sliding
     div.onclick = () => {
-  // Toggle: select → place mode, click again → deselect and back to slide mode
-    if (state.selectedDisplay === idx) {
-      // unselect → allow sliding again
-      state.selectedDisplay = null;
-      state.selected = null;
-      state.validDests.clear();
-      state.phase = 'slide';
-    } else {
-      // select this tile → prepare to place
-      state.selectedDisplay = idx;
-      state.selected = null;
-      state.validDests.clear();
-      state.phase = 'place';
-    }
-    renderDisplay();
-    render();
-    setStatus();
-  };
+      if (state.selectedDisplay === idx) {
+        // unselect → allow sliding again
+        state.selectedDisplay = null;
+        state.selected = null;
+        state.validDests.clear();
+        state.phase = 'place';          // stay in place; can click board to start slide
+      } else {
+        // select this tile → prepare to place
+        state.selectedDisplay = idx;
+        state.selected = null;
+        state.validDests.clear();
+        state.phase = 'place';
+      }
+      renderDisplay();
+      render();
+      setStatus();
+    };
+
     displayEl.appendChild(div);
   });
   updateSupplyBadge();
 }
-function updateSupplyBadge() { 
-  if(supplyBadge) 
-    supplyBadge.textContent = `Supply: ${state.supply.length}`; 
-}
+function updateSupplyBadge(){ if(supplyBadge) supplyBadge.textContent = `Supply: ${state.supply.length}`; }
 
+// ====== Live Score ======
 function updateLiveScore(){
   const s1 = computeScoreFor(0);
   const s2 = computeScoreFor(1);
@@ -450,16 +455,17 @@ function updateLiveScore(){
 
   if (p1ScoreEl) p1ScoreEl.textContent = s1.total;
   if (p2ScoreEl) p2ScoreEl.textContent = s2.total;
-  if (p1FocusEl) p1FocusEl.textContent = `P1: ${s1.focus === 'genre' ? 'Genres' : 'Colors'}`;
-  if (p2FocusEl) p2FocusEl.textContent = `P2: ${s2.focus === 'genre' ? 'Genres' : 'Colors'}`;
+  if (p1FocusEl) p1FocusEl.textContent = `P1: ${s1.focus === 'genre' ? 'Toys' : 'Colors'}`;
+  if (p2FocusEl) p2FocusEl.textContent = `P2: ${s2.focus === 'genre' ? 'Toys' : 'Colors'}`;
 }
-
 
 // ====== Status & Scoring ======
 function setStatus(){
   const p = state.current+1;
   const focus = state.focuses[state.current]==="genre" ? "Toys" : "Colors";
-  const phase = state.phase==="slide" ? "Slide a toy" : (state.selectedDisplay==null ? "Place: select a display tile" : "Place: click an empty cell");
+  const phase = state.phase==="slide"
+    ? (state.hasSlidThisTurn ? "You already slid — place a tile" : "Optional: slide a tile, or select from display to place")
+    : (state.selectedDisplay==null ? "Place: select a display tile" : "Place: click an empty cell");
   const el = document.getElementById("status");
   if (el) el.textContent = `Player ${p} · Focus: ${focus} · ${phase}`;
   updateLiveScore();
