@@ -40,10 +40,66 @@ function indexFor(toy, color) {
   if (pos < 0) return -1;
   return base + pos; // 0..35
 }
+
 function fileForIndex(idx, toy, color) {
   return `${ICON_DIR}/_${String(idx).padStart(4,"0")}_${toy}_${color}${ICON_EXT}`;
 }
 const keyIcon = (toy, color) => `${toy}|${color}`;
+
+// ====== SFX (simple audio manager) ======
+const SFX_PATH = "assets/sfx";  // put your .mp3/.wav files here
+
+const SFX = {
+  click:        `${SFX_PATH}/click.mp3`,
+  select:       `${SFX_PATH}/select.mp3`,
+  slideStart:   `${SFX_PATH}/slide_start.mp3`,
+  slideEnd:     `${SFX_PATH}/slide_end.mp3`,
+  place:        `${SFX_PATH}/place.mp3`,
+  turn:         `${SFX_PATH}/turn_banner.mp3`,
+  invalid:      `${SFX_PATH}/invalid.mp3`,
+  scoreOpen:    `${SFX_PATH}/score_open.mp3`,
+  scoreClose:   `${SFX_PATH}/score_close.mp3`
+};
+
+// Preload lightweight HTMLAudio elements (low-friction, no Web Audio setup)
+const sfxPool = new Map(); // name -> [Audio, Audio, ...] for overlap
+function preloadSfx() {
+  Object.entries(SFX).forEach(([name, url]) => {
+    const a1 = new Audio(url); a1.preload = "auto"; a1.volume = 0.7;
+    const a2 = new Audio(url); a2.preload = "auto"; a2.volume = 0.7;
+    sfxPool.set(name, [a1, a2]); // 2-lane pool prevents cutoffs on quick repeats
+  });
+}
+
+// Respect browser autoplay policy: unlock audio on first user gesture
+let audioUnlocked = false;
+function unlockAudioOnce() {
+  if (audioUnlocked) return;
+  // Try to play muted once to satisfy gesture requirement
+  for (const arr of sfxPool.values()) for (const a of arr) { a.muted = true; a.play().catch(()=>{}); a.pause(); a.currentTime=0; a.muted=false; }
+  audioUnlocked = true;
+  window.removeEventListener("pointerdown", unlockAudioOnce);
+  window.removeEventListener("keydown", unlockAudioOnce);
+}
+window.addEventListener("pointerdown", unlockAudioOnce, { once: true });
+window.addEventListener("keydown", unlockAudioOnce, { once: true });
+
+function playSfx(name) {
+  const arr = sfxPool.get(name);
+  if (!arr) return;
+  const a = arr.find(x => x.paused) || arr[0]; // grab a free lane
+  // Restart and play
+  a.currentTime = 0;
+  a.play().catch(()=>{ /* ignore (e.g. not unlocked yet) */ });
+}
+
+// optional: quick keyboard mute toggle
+let sfxMuted = false;
+function setSfxMuted(m) {
+  sfxMuted = m;
+  for (const arr of sfxPool.values()) for (const a of arr) a.muted = sfxMuted;
+}
+window.addEventListener("keydown", (e) => { if (e.key.toLowerCase() === "m") setSfxMuted(!sfxMuted); });
 
 // ====== Game constants ======
 const SIZE = 6; // 6x6 board
@@ -325,6 +381,7 @@ function onBoardClick(r,c){
     if (t && !state.selected) {
       // start selecting this tile to slide
       state.selected = { r, c };
+      playSfx("slideStart");
       computeValidDests(r, c);
     } 
     else if(state.selected && state.validDests.has(key(r,c))) {
@@ -333,6 +390,7 @@ function onBoardClick(r,c){
       const moved = state.board[sr][sc];
       state.board[r][c] = moved;
       state.board[sr][sc] = null;
+      playSfx("slideEnd");
 
       // mark that we've slid this turn
       state.hasSlidThisTurn = true;
@@ -364,6 +422,7 @@ function onBoardClick(r,c){
     if (state.board[r][c] === null && state.selectedDisplay != null) {
       const src = state.display[state.selectedDisplay];
       state.board[r][c] = { ...src };  // placed tiles are always movable later
+      playSfx("place");
 
       state.display.splice(state.selectedDisplay, 1);
       drawFromSupplyToDisplay();
@@ -427,12 +486,14 @@ function renderDisplay(){
     div.onclick = () => {
       if (state.selectedDisplay === idx) {
         // unselect → allow sliding again
+        playSfx("click");
         state.selectedDisplay = null;
         state.selected = null;
         state.validDests.clear();
         state.phase = 'place';          // stay in place; can click board to start slide
       } else {
         // select this tile → prepare to place
+        playSfx("select");
         state.selectedDisplay = idx;
         state.selected = null;
         state.validDests.clear();
@@ -447,7 +508,10 @@ function renderDisplay(){
   });
   updateSupplyBadge();
 }
-function updateSupplyBadge(){ if(supplyBadge) supplyBadge.textContent = `Supply: ${state.supply.length}`; }
+function updateSupplyBadge(){ 
+  if(supplyBadge) 
+    supplyBadge.textContent = `Supply: ${state.supply.length}`; 
+}
 
 // ====== Live Score ======
 function updateLiveScore(){
@@ -528,7 +592,10 @@ function showScoreModal(s1,s2,headline="Scores"){
     ${renderGroupList(s2.groups)}
   `;
   const dlg = document.getElementById("scoreDialog");
-  if (dlg && dlg.showModal) dlg.showModal();
+  if (dlg && dlg.showModal) {
+    dlg.showModal();
+    playSfx("scoreOpen");
+  }
 }
 function renderGroupList(groups){
   if(!groups.length) return '<p class="hint">No scoring groups.</p>';
@@ -580,6 +647,7 @@ function showTurnBanner(playerIndex) {
   strip.addEventListener('animationend', () => {
     overlay.style.display = 'none';
     strip.classList.remove('run');
+    playSfx("turn");
   }, { once: true });
 }
 
@@ -597,6 +665,7 @@ const closeScore = document.getElementById("closeScore");
 if (closeScore) closeScore.onclick = () => {
   const d = document.getElementById("scoreDialog");
   if (d && d.close) d.close();
+  playSfx("scoreClose");
 };
 
 // New Match: close results, then open focus picker
@@ -608,4 +677,5 @@ if (newMatchBtn) newMatchBtn.onclick = () => {
 };
 
 // ====== Kickoff (preload icons first) ======
+preloadSfx();
 preloadIcons().then(newGame);
