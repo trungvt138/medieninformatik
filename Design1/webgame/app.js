@@ -49,7 +49,7 @@ const keyIcon = (toy, color) => `${toy}|${color}`;
 // ====== BGM ========
 const bgm = new Audio("assets/audio/bgm.mp3");
 bgm.loop = true;
-bgm.volume = 0.35;
+bgm.volume = 0.15;
 let bgmEnabled = true;
 
 function startBgm() {

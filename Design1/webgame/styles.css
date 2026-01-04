@@ -46,20 +46,29 @@ header .sub {
   font-size: 13px; 
 }
 
-.wrap {
+.wrap{
   display: grid;
-  grid-template-columns: max-content 320px; /* keep your sizing */
+  grid-template-columns: max-content 360px; /* board hugs content, sidebar fixed */
   gap: 16px;
+
+  /* center the whole play area + reduce negative space */
+  width: min(96vw, 1180px);
+  margin: 90px auto 0;          /* go a bit lower */
   padding: 16px;
-  justify-content: center;
-  align-items: stretch;  /* ✅ KEY: make both columns same height */
+
+  justify-content: center;      /* center the 2-column grid inside the wrap */
+  align-items: stretch;         /* IMPORTANT: keeps right side aligned */
 }
 
+
 @media (max-width: 900px) {
-  .wrap { 
+  .wrap {
     grid-template-columns: 1fr;
+    width: min(100%, 640px);
+    margin: 0 auto;
   }
-  #boardContainer { 
+
+  #boardContainer {
     width: min(92vw, 640px);
   }
 }
