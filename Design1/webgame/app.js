@@ -353,7 +353,7 @@ function sizeBoardToContainer(){
   if (!cont) return;
 
   const isDesktop = window.matchMedia("(min-width: 900px)").matches;
-  const MAX_BOARD = isDesktop ? 560 : 640;
+  const MAX_BOARD = isDesktop ? 720 : 640;
 
   const availableW = Math.floor(cont.clientWidth);
   const header = document.querySelector("header");

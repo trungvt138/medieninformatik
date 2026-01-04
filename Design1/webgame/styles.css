@@ -47,19 +47,13 @@ header .sub {
 }
 
 .wrap{
+  width: min(1200px, calc(100vw - 32px));  /* overall play area width */
+  margin: 90px auto 0;                      /* you said margin 90 works */
   display: grid;
-  grid-template-columns: max-content 360px; /* board hugs content, sidebar fixed */
+  grid-template-columns: 1fr 320px;
   gap: 16px;
-
-  /* center the whole play area + reduce negative space */
-  width: min(96vw, 1180px);
-  margin: 90px auto 0;          /* go a bit lower */
-  padding: 16px;
-
-  justify-content: center;      /* center the 2-column grid inside the wrap */
-  align-items: stretch;         /* IMPORTANT: keeps right side aligned */
+  align-items: start;
 }
-
 
 @media (max-width: 900px) {
   .wrap {
@@ -68,8 +62,9 @@ header .sub {
     margin: 0 auto;
   }
 
-  #boardContainer {
-    width: min(92vw, 640px);
+  #boardContainer{
+    width: min(65vw, 720px);
+    max-width: 720px;
   }
 }
 
