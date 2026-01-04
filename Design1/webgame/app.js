@@ -221,6 +221,7 @@ function newGame(withFocusDialog = true){
 
   // Music: restart from beginning each new game
   restartBgm();
+  updateMuteIcon();
 
   // Focus selection vs immediate start
   if (withFocusDialog) showFocusDialog("start");
@@ -805,6 +806,29 @@ if (closeScore) closeScore.onclick = () => {
   playSfx("click");
 };
 
+const muteBtn = document.getElementById("muteBtn");
+
+function updateMuteIcon(){
+  if (!muteBtn) return;
+  muteBtn.textContent = bgmEnabled ? "🔊" : "🔇";
+}
+
+if (muteBtn){
+  muteBtn.onclick = () => {
+    playSfx("click");
+
+    bgmEnabled = !bgmEnabled;
+
+    if (bgmEnabled) {
+      startBgm();
+    } else {
+      bgm.pause();
+    }
+
+    updateMuteIcon();
+  };
+}
+
 // New Match: close results, then open focus picker
 const newMatchBtn = document.getElementById("newMatchBtn");
 if (newMatchBtn) newMatchBtn.onclick = () => {
@@ -817,4 +841,7 @@ if (newMatchBtn) newMatchBtn.onclick = () => {
 
 // ====== Kickoff (preload icons first) ======
 preloadSfx();
-preloadIcons().then(() => newGame(true));
+preloadIcons().then(() => {
+  newGame(true);
+  updateMuteIcon();
+});
