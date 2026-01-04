@@ -48,12 +48,12 @@ header .sub {
 
 .wrap {
   display: grid;
-  grid-template-columns: max-content 320px; /* left column hugs the board card */
+  grid-template-columns: max-content 320px; /* keep your sizing */
   gap: 16px;
   padding: 16px;
-  justify-content: center;                  /* center both columns on the page */
+  justify-content: center;
+  align-items: stretch;  /* ✅ KEY: make both columns same height */
 }
-
 
 @media (max-width: 900px) {
   .wrap { 
@@ -123,10 +123,11 @@ button:active {
   border-radius: 16px; 
 }
 
-.side { 
-  display: grid; 
-  gap: 12px; 
-  align-content: start; 
+.side {
+  display: grid;
+  gap: 12px;
+  height: 100%;          /* ✅ KEY: allow filling the column height */
+  grid-template-rows: 1fr auto;  /* ✅ Display grows, Score stays natural */
 }
 
 .pill { 
@@ -145,25 +146,33 @@ button:active {
   flex-wrap: wrap; 
 }
 
-.display { 
-  display: grid; 
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 8px; 
+.display{
+  flex: 1;            /* ✅ fill remaining space inside the card */
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 cols */
+  grid-template-rows: repeat(3, 1fr);              /* 3 rows */
+  gap: 8px;
+  width: 100%;
+
+  /* KEY: constant area, never shrinks */
+  aspect-ratio: 2 / 3;  /* 2 columns by 3 rows */
 }
 
-.slot {
-  position: relative;
-  background: #0f1218;
-  border: 1px dashed #2e3442;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
+.slot{
+  width: 100%;
+  aspect-ratio: 1 / 1;
 
-  /* square + a bit larger so the tile fits comfortably */
-  width: 112px;
-  height: 112px;
-  /* or: aspect-ratio: 1 / 1; height: auto; min-width: 96px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+}
+
+.slot.empty{
+  opacity: 0.35;
+  cursor: default;
 }
 
 .slot.sel { 
@@ -256,11 +265,10 @@ dialog::backdrop {
   margin: 12px 0; 
 }
 
-/* the first card (board area) should only be as wide as its contents */
-main .card.pad:first-child {
-  width: fit-content;        /* shrink-to-fit */
-  max-width: 620px;          /* cap so it never gets huge */
-  margin: 0 auto;            /* keep it centered within the grid cell */
+.side .card:first-child .pad {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Turn banner overlay */

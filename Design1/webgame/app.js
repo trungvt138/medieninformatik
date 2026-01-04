@@ -574,7 +574,7 @@ function renderDisplay(){
     canv.width = PREV;
     canv.height = PREV;
     const c2 = canv.getContext('2d');
-    drawTile(c2, PAD, PAD, PREV - PAD*2, t, false);
+    drawTile(c2, 0, 0, PREV, t, false);
 
     div.appendChild(canv);
 
