@@ -59,6 +59,7 @@ function startBgm() {
 
 function stopBgm() {
   bgm.pause();
+  bgm.currentTime = 0;
 }
 
 const endAudio = new Audio(`assets/audio/end.mp3`);
@@ -190,26 +191,37 @@ function preloadIcons(){
 }
 
 // ====== New Game ======
-function newGame(){
+function newGame(withFocusDialog = true){
   state.board = emptyBoard();
   state.supply = shuffle(makeDeck());
   state.display = [];
+
   for(let i=0;i<6;i++) drawFromSupplyToDisplay();
+
   state.current = 0;
   state.phase = "place";
-  state.selected = null; state.validDests.clear(); state.selectedDisplay = null;
+  state.selected = null; 
+  state.validDests.clear(); 
+  state.selectedDisplay = null;
   state.hasSlidThisTurn = false;
+
   updateSupplyBadge();
   renderDisplay();
   sizeBoardToContainer();
+
   if (iconsReady) render();
-  showFocusDialog();
+
+  if (withFocusDialog) {
+    showFocusDialog();
+  }
+  else {
+    showTurnBanner(state.current);
+  }
+
   setStatus();
   updateLiveScore();
-  playMusic("bg")
-  if (!withFocusDialog) {
-    showTurnBanner(state.current); // NEW: announce turn when skipping dialog
-  }
+
+  startBgm();
 }
 
 function drawFromSupplyToDisplay(){
@@ -554,8 +566,13 @@ function renderDisplay(){
   updateSupplyBadge();
 }
 function updateSupplyBadge(){ 
-  if(supplyBadge) 
-    supplyBadge.textContent = `Supply: ${state.supply.length}`; 
+  if(!supplyBadge) return;
+
+  const total = TOYS.length * COLORS.length;           // 36
+  const remaining = state.supply.length + state.display.length; // still not on board
+  const placed = total - remaining;
+
+  supplyBadge.textContent = `Toys: ${remaining} left (${placed}/${total} placed)`;
 }
 
 // ====== Live Score ======
@@ -576,14 +593,36 @@ function updateLiveScore(){
 
 // ====== Status & Scoring ======
 function setStatus(){
-  const p = state.current+1;
-  const focus = state.focuses[state.current]==="genre" ? "Toys" : "Colors";
-  const phase = state.phase==="slide"
+  const p = state.current + 1;
+  const focus = state.focuses[state.current] === "genre" ? "Toys" : "Colors";
+  const phase = state.phase === "slide"
     ? (state.hasSlidThisTurn ? "You already slid — place a tile" : "Optional: slide a tile, or select from display to place")
-    : (state.selectedDisplay==null ? "Place: select a display tile" : "Place: click an empty cell");
-  const el = document.getElementById("status");
-  if (el) el.textContent = `Player ${p} · Focus: ${focus} · ${phase}`;
+    : (state.selectedDisplay == null ? "Place: select a display tile" : "Place: click an empty cell");
+
+  // Console-only status (no UI text updates)
+  console.log(`Player ${p} · Focus: ${focus} · ${phase}`);
+
+  updateTurnHighlight();   // NEW: drive UI highlighting instead
   updateLiveScore();
+}
+
+function updateTurnHighlight(){
+  const p1ScoreEl = document.getElementById('p1Score');
+  const p2ScoreEl = document.getElementById('p2Score');
+  const p1FocusEl = document.getElementById('p1Focus');
+  const p2FocusEl = document.getElementById('p2Focus');
+
+  const p1Row = p1ScoreEl?.parentElement; // <div><b>Player 1</b> <span ...></div>
+  const p2Row = p2ScoreEl?.parentElement;
+
+  const p1Active = (state.current === 0);
+
+  // highlight the whole row + focus pill
+  if (p1Row) p1Row.classList.toggle('turn-active', p1Active);
+  if (p2Row) p2Row.classList.toggle('turn-active', !p1Active);
+
+  if (p1FocusEl) p1FocusEl.classList.toggle('turn-active-pill', p1Active);
+  if (p2FocusEl) p2FocusEl.classList.toggle('turn-active-pill', !p1Active);
 }
 
 function computeScoreFor(playerIdx){
@@ -703,7 +742,7 @@ const rulesBtn = document.getElementById("rulesBtn");
 
 if (newBtn) newBtn.onclick = ()=>{
   playSfx("click");
-  newGame;
+  newGame(true);
 };
 
 if (rulesBtn) rulesBtn.onclick = ()=>{ 
@@ -740,4 +779,4 @@ if (newMatchBtn) newMatchBtn.onclick = () => {
 
 // ====== Kickoff (preload icons first) ======
 preloadSfx();
-preloadIcons().then(newGame);
+preloadIcons().then(() => newGame(true));

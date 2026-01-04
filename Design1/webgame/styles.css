@@ -311,3 +311,14 @@ main .card.pad:first-child {
   100% { transform: translate(-50%,  -50%); opacity: 0; }
 }
 
+.turn-active {
+  outline: 2px solid var(--accent);
+  border-radius: 10px;
+  padding: 6px 8px;
+  background: rgba(110, 168, 254, 0.10);
+}
+
+.turn-active-pill {
+  outline: 2px solid var(--accent);
+}
+
