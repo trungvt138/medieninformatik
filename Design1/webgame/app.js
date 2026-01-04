@@ -47,7 +47,7 @@ function fileForIndex(idx, toy, color) {
 const keyIcon = (toy, color) => `${toy}|${color}`;
 
 // ====== BGM ========
-const bgm = new Audio("assets/audio/bgm.mp3");
+const bgm = new Audio("./assets/audio/bgm.mp3");
 bgm.loop = true;
 bgm.volume = 0.15;
 let bgmEnabled = true;
@@ -70,7 +70,7 @@ function restartBgm(){
   }
 }
 
-const endAudio = new Audio(`assets/audio/end.mp3`);
+const endAudio = new Audio(`./assets/audio/end.mp3`);
 endAudio.preload = "auto";
 endAudio.volume = 0.6;
 
