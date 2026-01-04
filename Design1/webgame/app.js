@@ -46,19 +46,45 @@ function fileForIndex(idx, toy, color) {
 }
 const keyIcon = (toy, color) => `${toy}|${color}`;
 
+// ====== BGM ========
+const bgm = new Audio("assets/audio/bgm.mp3");
+bgm.loop = true;
+bgm.volume = 0.35;
+let bgmEnabled = true;
+
+function startBgm() {
+  if (!bgmEnabled) return;
+  bgm.play().catch(() => {});
+}
+
+function stopBgm() {
+  bgm.pause();
+}
+
+const endAudio = new Audio(`assets/audio/end.mp3`);
+endAudio.preload = "auto";
+endAudio.volume = 0.6;
+
+function playEndMusic() {
+  // stop any previous run and play from start
+  endAudio.pause();
+  endAudio.currentTime = 0;
+  endAudio.play().catch(()=>{});
+}
+
+function stopEndMusic() {
+  endAudio.pause();
+  endAudio.currentTime = 0;
+}
+
 // ====== SFX (simple audio manager) ======
 const SFX_PATH = "assets/sfx";  // put your .mp3/.wav files here
 
 const SFX = {
-  click:        `${SFX_PATH}/click.mp3`,
-  select:       `${SFX_PATH}/select.mp3`,
-  slideStart:   `${SFX_PATH}/slide_start.mp3`,
-  slideEnd:     `${SFX_PATH}/slide_end.mp3`,
-  place:        `${SFX_PATH}/place.mp3`,
-  turn:         `${SFX_PATH}/turn_banner.mp3`,
-  invalid:      `${SFX_PATH}/invalid.mp3`,
-  scoreOpen:    `${SFX_PATH}/score_open.mp3`,
-  scoreClose:   `${SFX_PATH}/score_close.mp3`
+  select:       `${SFX_PATH}/select.wav`,
+  place:        `${SFX_PATH}/place.wav`,
+  turn:         `${SFX_PATH}/turn.wav`,
+  click:        `${SFX_PATH}/click.wav`
 };
 
 // Preload lightweight HTMLAudio elements (low-friction, no Web Audio setup)
@@ -80,6 +106,7 @@ function unlockAudioOnce() {
   audioUnlocked = true;
   window.removeEventListener("pointerdown", unlockAudioOnce);
   window.removeEventListener("keydown", unlockAudioOnce);
+  startBgm();
 }
 window.addEventListener("pointerdown", unlockAudioOnce, { once: true });
 window.addEventListener("keydown", unlockAudioOnce, { once: true });
@@ -172,7 +199,6 @@ function newGame(){
   state.phase = "place";
   state.selected = null; state.validDests.clear(); state.selectedDisplay = null;
   state.hasSlidThisTurn = false;
-
   updateSupplyBadge();
   renderDisplay();
   sizeBoardToContainer();
@@ -180,7 +206,7 @@ function newGame(){
   showFocusDialog();
   setStatus();
   updateLiveScore();
-  
+  playMusic("bg")
   if (!withFocusDialog) {
     showTurnBanner(state.current); // NEW: announce turn when skipping dialog
   }
@@ -224,6 +250,7 @@ function showFocusDialog(){
   document.getElementById('startBtn').onclick = () => {
     let p1 = document.querySelector('input[name="p1"]:checked')?.value || 'genre';
     let p2 = document.querySelector('input[name="p2"]:checked')?.value || 'color';
+    playSfx("click");
     if (p1 === p2) p2 = (p1 === 'genre') ? 'color' : 'genre';
     state.focuses = [p1, p2];
     dlg.close();
@@ -378,10 +405,23 @@ function onBoardClick(r,c){
 
     const t = state.board[r][c];
 
+    // NEW: one-click switch between source tiles while in slide mode
+    if (state.selected && t && (state.selected.r !== r || state.selected.c !== c)) {
+      state.selected = { r, c };       // switch to the newly clicked tile
+      playSfx("select");
+      state.validDests.clear();
+      computeValidDests(r, c);
+      render();
+      setStatus();
+      return;
+    }
+
     if (t && !state.selected) {
       // start selecting this tile to slide
+      state.selectedDisplay = null;            // <<< clear display pick
+      renderDisplay();
       state.selected = { r, c };
-      playSfx("slideStart");
+      playSfx("select");
       computeValidDests(r, c);
     } 
     else if(state.selected && state.validDests.has(key(r,c))) {
@@ -390,7 +430,7 @@ function onBoardClick(r,c){
       const moved = state.board[sr][sc];
       state.board[r][c] = moved;
       state.board[sr][sc] = null;
-      playSfx("slideEnd");
+      playSfx("place");
 
       // mark that we've slid this turn
       state.hasSlidThisTurn = true;
@@ -408,8 +448,11 @@ function onBoardClick(r,c){
     const t = state.board[r][c];
 
     // Click a board tile to start sliding — only if you haven't slid this turn
+    
     if (t && !state.hasSlidThisTurn) {
-      state.selectedDisplay = null;   // auto-unselect any display pick
+      playSfx("select");
+      state.selectedDisplay = null;
+      renderDisplay();   // auto-unselect any display pick
       state.phase = 'slide';
       state.selected = { r, c };
       computeValidDests(r, c);
@@ -429,6 +472,8 @@ function onBoardClick(r,c){
       state.selectedDisplay = null;
 
       if (boardFull()) {
+        stopBgm();
+        playEndMusic();
         endAndScore();
       } else {
         // next player — start in PLACE; slide remains optional
@@ -486,7 +531,7 @@ function renderDisplay(){
     div.onclick = () => {
       if (state.selectedDisplay === idx) {
         // unselect → allow sliding again
-        playSfx("click");
+        playSfx("place");
         state.selectedDisplay = null;
         state.selected = null;
         state.validDests.clear();
@@ -620,6 +665,7 @@ function openFocusForNewGame(){
     startBtn.onclick = () => {
       let p1 = document.querySelector('input[name="p1"]:checked')?.value || 'genre';
       let p2 = document.querySelector('input[name="p2"]:checked')?.value || 'color';
+      playSfx("click");
       if (p1 === p2) p2 = (p1 === 'genre') ? 'color' : 'genre';
       state.focuses = [p1, p2];
       dlg.close();
@@ -636,7 +682,7 @@ function showTurnBanner(playerIndex) {
 
   label.textContent = `Player ${playerIndex + 1}'s Turn`;
   overlay.style.display = 'block';
-
+  playSfx("turn");
   // retrigger CSS animation
   strip.classList.remove('run');
   // force reflow
@@ -647,7 +693,6 @@ function showTurnBanner(playerIndex) {
   strip.addEventListener('animationend', () => {
     overlay.style.display = 'none';
     strip.classList.remove('run');
-    playSfx("turn");
   }, { once: true });
 }
 
@@ -655,22 +700,39 @@ function showTurnBanner(playerIndex) {
 // ====== Buttons ======
 const newBtn = document.getElementById("newBtn");
 const rulesBtn = document.getElementById("rulesBtn");
-if (newBtn) newBtn.onclick = newGame;
-if (rulesBtn) rulesBtn.onclick = ()=>{ const d=document.getElementById("rulesDialog"); if(d&&d.showModal) d.showModal(); };
+
+if (newBtn) newBtn.onclick = ()=>{
+  playSfx("click");
+  newGame;
+};
+
+if (rulesBtn) rulesBtn.onclick = ()=>{ 
+  const d=document.getElementById("rulesDialog");
+  playSfx("click");
+  if(d&&d.showModal) d.showModal(); 
+};
+
 const closeRules = document.getElementById("closeRules");
-if (closeRules) closeRules.onclick = ()=>{ const d=document.getElementById("rulesDialog"); if(d&&d.close) d.close(); };
+if (closeRules) closeRules.onclick = ()=>{
+  playSfx("click");
+  const d=document.getElementById("rulesDialog"); 
+  if(d&&d.close) d.close(); 
+};
 
 // Close button in Scores dialog (if not already wired)
 const closeScore = document.getElementById("closeScore");
 if (closeScore) closeScore.onclick = () => {
   const d = document.getElementById("scoreDialog");
   if (d && d.close) d.close();
-  playSfx("scoreClose");
+  stopEndMusic();
+  playSfx("click");
 };
 
 // New Match: close results, then open focus picker
 const newMatchBtn = document.getElementById("newMatchBtn");
 if (newMatchBtn) newMatchBtn.onclick = () => {
+  stopEndMusic();
+  playSfx("click");
   const d = document.getElementById("scoreDialog");
   if (d && d.close) d.close();
   openFocusForNewGame();   // ← show criteria dialog now
