@@ -52,14 +52,14 @@
     </div>
 
 
-      <div class="card pad">
+      <!-- <div class="card pad">
         <div class="pill">Turn Flow</div>
         <div class="hint">
           1) Slide exactly 1 toy along its row/column until blocked.
           2) Place exactly 1 toy from the display into any empty space.
           Then refill the display.
         </div>
-      </div>
+      </div> -->
     </aside>
   </main>
 
@@ -92,23 +92,38 @@
 
   <!-- Rules modal -->
   <dialog id="rulesDialog">
-    <div class="modal-head">Rules (short)</div>
-    <div class="modal-body">
-      <p><b>Story.</b> Two friends are racing through a toy store. One loves collecting
-        <b>different colors of the same toy</b>. The other loves collecting
-        <b>different toys in the same color</b>. Slide toys along clear aisles and place new arrivals to build your collection.</p>
-      <ul>
-        <li><b>Board:</b> 6×6. <b>Tiles:</b> 36 (6 Toys × 6 Colors). <b>Display:</b> 6 tiles.</li>
-        <li><b>Your turn:</b> (1) <b>Slide</b> exactly 1 toy along its row/column any distance until blocked.
-            (2) <b>Place</b> exactly 1 toy from the display into any empty space. Refill the display.</li>
-        <li><b>Focus:</b> Each player scores only contiguous (orthogonal) groups that match their focus: <i>Toys</i> or <i>Colors</i>.</li>
-        <li><b>Points per group size:</b> 2→1, 3→3, 4→6, 5→10, 6→15.</li>
-        <li><b>End:</b> When the board is full, compute scores.</li>
-      </ul>
-      <p class="hint">Tip: Open a lane with your slide, then place to touch multiple clusters at once.</p>
-    </div>
-    <div class="modal-foot"><button id="closeRules">Close</button></div>
-  </dialog>
+  <div class="modal-head">Rules</div>
+  <div class="modal-body">
+    <p><b>Welcome to Toy Shop Tussle!</b> Two friends are browsing the toy store with totally different “collector brains.”
+      One is hunting for <b>the same toy in lots of colors</b>, while the other wants <b>lots of different toys in the same color</b>.
+      Each turn you can slide a toy through open aisles and place a new arrival from the display to build the best collection.</p>
+
+    <ul>
+      <li><b>Board:</b> 6×6. <b>Tiles:</b> 36 (6 Toys × 6 Colors). <b>Display:</b> 6 tiles.</li>
+
+      <li><b>Your turn:</b>
+        <ul>
+          <li><b>Slide (optional):</b>
+            You may slide <b>one</b> toy already on the board.
+            Move it up, down, left, or right through empty spaces.
+            You can skip this step.</li>
+          <li><b>Place a Toy:</b>
+            Pick <b>one</b> toy from the Display and place it on any empty space.
+            The Display refills automatically.</li>
+        </ul>
+      </li>
+
+      <li><b>Focus:</b> Each player scores connected (up/down/left/right) groups that match their focus:
+        <i>Toys</i> or <i>Colors</i>.</li>
+      <li><b>Points per group size:</b> 2→1, 3→3, 4→6, 5→10, 6→15.</li>
+      <li><b>End:</b> When the board is full, scores are calculated. Highest score wins.</li>
+    </ul>
+
+    <p class="hint">Tip: Open a lane with your slide, then place to touch multiple clusters at once.</p>
+  </div>
+  <div class="modal-foot"><button id="closeRules">Close</button></div>
+</dialog>
+
 
   <dialog id="scoreDialog">
     <div class="modal-head">Scores</div>

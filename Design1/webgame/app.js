@@ -62,6 +62,14 @@ function stopBgm() {
   bgm.currentTime = 0;
 }
 
+function restartBgm(){
+  bgm.currentTime = 0;
+  if (audioUnlocked) {
+    bgm.pause();
+    startBgm();
+  }
+}
+
 const endAudio = new Audio(`assets/audio/end.mp3`);
 endAudio.preload = "auto";
 endAudio.volume = 0.6;
@@ -192,37 +200,36 @@ function preloadIcons(){
 
 // ====== New Game ======
 function newGame(withFocusDialog = true){
+  // Reset board state
   state.board = emptyBoard();
   state.supply = shuffle(makeDeck());
   state.display = [];
-
-  for(let i=0;i<6;i++) drawFromSupplyToDisplay();
+  for (let i = 0; i < 6; i++) drawFromSupplyToDisplay();
 
   state.current = 0;
   state.phase = "place";
-  state.selected = null; 
-  state.validDests.clear(); 
+  state.selected = null;
+  state.validDests.clear();
   state.selectedDisplay = null;
   state.hasSlidThisTurn = false;
 
+  // UI
   updateSupplyBadge();
   renderDisplay();
   sizeBoardToContainer();
-
   if (iconsReady) render();
 
-  if (withFocusDialog) {
-    showFocusDialog();
-  }
-  else {
-    showTurnBanner(state.current);
-  }
+  // Music: restart from beginning each new game
+  restartBgm();
 
+  // Focus selection vs immediate start
+  if (withFocusDialog) showFocusDialog("start");
+  else showTurnBanner(state.current);
+
+  // One call is enough (this already calls updateLiveScore)
   setStatus();
-  updateLiveScore();
-
-  startBgm();
 }
+
 
 function drawFromSupplyToDisplay(){
   if(state.supply.length>0 && state.display.length<6){
@@ -231,46 +238,78 @@ function drawFromSupplyToDisplay(){
 }
 
 // ====== Focus selection (mutually exclusive) ======
-function showFocusDialog(){
-  const dlg = document.getElementById('focusDialog');
-  if (!dlg || !dlg.showModal) return;
-  dlg.showModal();
+let focusDialogMode = "start"; // "start" | "newMatch"
+let focusDialogInited = false;
 
-  const p1Radios = [...document.querySelectorAll('input[name="p1"]')];
-  const p2Radios = [...document.querySelectorAll('input[name="p2"]')];
+function initFocusDialog(){
+  if (focusDialogInited) return;
+  focusDialogInited = true;
 
+  const startBtn = document.getElementById('startBtn');
+  if (!startBtn) return;
+
+  // Enforce mutual exclusion (only attach once)
   const enforceOpposites = (whoChanged) => {
     const p1 = document.querySelector('input[name="p1"]:checked')?.value;
     const p2 = document.querySelector('input[name="p2"]:checked')?.value;
     if (!p1 || !p2) return;
     if (p1 === p2) {
-      if (whoChanged === 'p1') {
-        const target = p1 === 'genre' ? 'color' : 'genre';
-        const r = document.querySelector(`input[name="p2"][value="${target}"]`);
-        if (r) r.checked = true;
-      } else {
-        const target = p2 === 'genre' ? 'color' : 'genre';
-        const r = document.querySelector(`input[name="p1"][value="${target}"]`);
-        if (r) r.checked = true;
-      }
+      const target = (p1 === 'genre') ? 'color' : 'genre';
+      const sel = whoChanged === "p1"
+        ? `input[name="p2"][value="${target}"]`
+        : `input[name="p1"][value="${target}"]`;
+      const r = document.querySelector(sel);
+      if (r) r.checked = true;
     }
   };
 
-  p1Radios.forEach(r => r.addEventListener('change', () => enforceOpposites('p1')));
-  p2Radios.forEach(r => r.addEventListener('change', () => enforceOpposites('p2')));
+  document.querySelectorAll('input[name="p1"]').forEach(r =>
+    r.addEventListener('change', () => enforceOpposites('p1'))
+  );
+  document.querySelectorAll('input[name="p2"]').forEach(r =>
+    r.addEventListener('change', () => enforceOpposites('p2'))
+  );
 
-  document.getElementById('startBtn').onclick = () => {
+  // Start button behavior depends on mode
+  startBtn.onclick = () => {
     let p1 = document.querySelector('input[name="p1"]:checked')?.value || 'genre';
     let p2 = document.querySelector('input[name="p2"]:checked')?.value || 'color';
     playSfx("click");
+
     if (p1 === p2) p2 = (p1 === 'genre') ? 'color' : 'genre';
     state.focuses = [p1, p2];
-    dlg.close();
+
+    const dlg = document.getElementById('focusDialog');
+    if (dlg?.close) dlg.close();
+
+    // Update UI once
     setStatus();
-    updateLiveScore();
     showTurnBanner(state.current);
+
+    // Only when starting a NEW MATCH do we rebuild the board
+    if (focusDialogMode === "newMatch") {
+      newGame(false);
+    }
   };
 }
+
+function showFocusDialog(mode = "start"){
+  const dlg = document.getElementById('focusDialog');
+  if (!dlg) return;
+
+  initFocusDialog();
+  focusDialogMode = mode;
+
+  // Avoid throwing if already open
+  if (dlg.open) return;
+  if (dlg.showModal) dlg.showModal();
+  else dlg.setAttribute("open", "");
+}
+
+function openFocusForNewGame(){
+  showFocusDialog("newMatch");
+}
+
 
 // ====== Sizing ======
 function sizeBoardToContainer(){
@@ -678,7 +717,6 @@ function showScoreModal(s1,s2,headline="Scores"){
   const dlg = document.getElementById("scoreDialog");
   if (dlg && dlg.showModal) {
     dlg.showModal();
-    playSfx("scoreOpen");
   }
 }
 function renderGroupList(groups){
