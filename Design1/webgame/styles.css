@@ -139,8 +139,8 @@ button:active {
 #boardContainer {
   position: relative;
   aspect-ratio: 1 / 1;          /* keep the box square */
-  width: min(70vw, 560px);      /* modest size on desktop */
-  max-width: 560px;
+  width: clamp(520px, 72vmin, 720px);
+  max-width: 720px;
   margin: 0;
   display: flex;
   align-items: center;

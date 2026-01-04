@@ -9,7 +9,7 @@ const COLORS = ["Orange","Red","Yellow","Green","Blue","Purple"];       // UI / 
 // Files live at: assets/sliced/_0000_Robot_Orange.png … _0035_Ball_Purple.png
 // Folder index order (by color column):
 // Orange: 0000..0005, Red: 0006..0011, Yellow: 0012..0017, Green: 0018..0023, Blue: 0024..0029, Purple: 0030..0035
-const ICON_DIR = "assets/sliced";
+const ICON_DIR = "./assets/sliced";
 const ICON_EXT = ".png";
 
 // Base index for each color column in your folder
