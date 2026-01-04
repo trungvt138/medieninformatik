@@ -13,9 +13,19 @@
       <h1>Toy Shop Tussle</h1>
     </div>
     <div class="toolbar">
-      <button id="muteBtn">🔊</button>
+      <button id="audioBtn" title="Mute / Unmute audio">🔊</button>
+
+      <input
+        id="volumeSlider"
+        type="range"
+        min="0"
+        max="100"
+        value="60"
+        aria-label="Volume"
+      />
+
       <button id="newBtn" class="btn-primary">New Game</button>
-      <button id="rulesBtn">Rules</button>
+      <button id="rulesBtn" class="btn-primary">Rules</button>
     </div>
   </header>
 

@@ -110,13 +110,23 @@ button:active {
   transform: translateY(1px); 
 }
 
-.btn-primary { 
-  background: #2a3654; 
-  border-color: #3b4a6d; 
+.btn-primary {
+  background: #222734;
+  border-color: #2b3140;
 }
 
-.btn-primary:hover { 
-  background: #344469; 
+/* hover / keyboard focus */
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background: #2a3654;
+  border-color: #6ea8fe;
+  box-shadow: 0 0 0 3px rgba(110,168,254,.18);
+}
+
+/* click */
+.btn-primary:active {
+  background: #344469;
+  border-color: #6ea8fe;
 }
 
 /* Make the board card a centering stage */
@@ -351,3 +361,8 @@ dialog::backdrop {
   outline: 2px solid var(--accent);
 }
 
+#volumeSlider {
+  width: 140px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}

@@ -100,8 +100,8 @@ const SFX = {
 const sfxPool = new Map(); // name -> [Audio, Audio, ...] for overlap
 function preloadSfx() {
   Object.entries(SFX).forEach(([name, url]) => {
-    const a1 = new Audio(url); a1.preload = "auto"; a1.volume = 0.7;
-    const a2 = new Audio(url); a2.preload = "auto"; a2.volume = 0.7;
+    const a1 = new Audio(url); a1.preload = "auto"; a1.volume = BASE_SFX_VOL * masterVolume;
+    const a2 = new Audio(url); a2.preload = "auto"; a2.volume = BASE_SFX_VOL * masterVolume;
     sfxPool.set(name, [a1, a2]); // 2-lane pool prevents cutoffs on quick repeats
   });
 }
@@ -121,21 +121,56 @@ window.addEventListener("pointerdown", unlockAudioOnce, { once: true });
 window.addEventListener("keydown", unlockAudioOnce, { once: true });
 
 function playSfx(name) {
+  if (masterMuted || masterVolume === 0) return;
+
   const arr = sfxPool.get(name);
   if (!arr) return;
-  const a = arr.find(x => x.paused) || arr[0]; // grab a free lane
-  // Restart and play
+
+  const a = arr.find(x => x.paused) || arr[0];
   a.currentTime = 0;
-  a.play().catch(()=>{ /* ignore (e.g. not unlocked yet) */ });
+  a.play().catch(()=>{});
 }
 
-// optional: quick keyboard mute toggle
-let sfxMuted = false;
-function setSfxMuted(m) {
-  sfxMuted = m;
-  for (const arr of sfxPool.values()) for (const a of arr) a.muted = sfxMuted;
+// ====== Master Audio Controls (Music + SFX together) ======
+const BASE_BGM_VOL = 0.15;
+const BASE_SFX_VOL = 0.7;
+const BASE_END_VOL = 0.6;
+
+let masterMuted = false;
+let masterVolume = 0.60; // 0..1 (matches slider default)
+
+function applyAudioSettings(){
+  // music volumes
+  bgm.volume = BASE_BGM_VOL * masterVolume;
+  endAudio.volume = BASE_END_VOL * masterVolume;
+
+  // mute/unmute behavior
+  if (masterMuted || masterVolume === 0){
+    bgm.pause();
+    endAudio.pause();
+  } else {
+    // only resume bgm if enabled + unlocked
+    if (bgmEnabled && audioUnlocked) startBgm();
+  }
+
+  // sfx volumes + mute
+  for (const arr of sfxPool.values()){
+    for (const a of arr){
+      a.volume = BASE_SFX_VOL * masterVolume;
+      a.muted = masterMuted || masterVolume === 0;
+    }
+  }
+
+  updateAudioUI();
 }
-window.addEventListener("keydown", (e) => { if (e.key.toLowerCase() === "m") setSfxMuted(!sfxMuted); });
+
+function updateAudioUI(){
+  const audioBtn = document.getElementById("audioBtn");
+  const slider = document.getElementById("volumeSlider");
+  if (audioBtn) audioBtn.textContent = (masterMuted || masterVolume === 0) ? "🔇" : "🔊";
+  if (slider) slider.value = String(Math.round(masterVolume * 100));
+}
+
 
 // ====== Game constants ======
 const SIZE = 6; // 6x6 board
@@ -829,6 +864,24 @@ if (muteBtn){
   };
 }
 
+const audioBtn = document.getElementById("audioBtn");
+const volumeSlider = document.getElementById("volumeSlider");
+
+if (audioBtn){
+  audioBtn.onclick = () => {
+    playSfx("click");
+    masterMuted = !masterMuted;
+    applyAudioSettings();
+  };
+}
+
+if (volumeSlider){
+  volumeSlider.addEventListener("input", () => {
+    masterVolume = Math.max(0, Math.min(1, Number(volumeSlider.value) / 100));
+    applyAudioSettings();
+  });
+}
+
 // New Match: close results, then open focus picker
 const newMatchBtn = document.getElementById("newMatchBtn");
 if (newMatchBtn) newMatchBtn.onclick = () => {
@@ -843,5 +896,5 @@ if (newMatchBtn) newMatchBtn.onclick = () => {
 preloadSfx();
 preloadIcons().then(() => {
   newGame(true);
-  updateMuteIcon();
+  applyAudioSettings();
 });
