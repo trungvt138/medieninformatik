@@ -1,5 +1,5 @@
 // ==============================
-// Toy Shop Tussle — app.js
+// Toy Store Tussle — app.js
 // ==============================
 
 // ====== Toys, Colors, and Sliced Icon Files ======
