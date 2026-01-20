@@ -153,4 +153,4 @@ verwandter(X, Y):- tante(Z, X), elternteil_von(Z, Y).
 cousin(X, Y):- verwandter(X, Y), mann(X).
 
 /*X ist Cousine von Y, wenn X Verwandter von Y und X weiblich ist.*/
-cousine(X, Y):- (tante(Z, X); onkel(Z, X)), elternteil_von(Z, Y), frau(X).
+cousine(X, Y):- verwandter(X, Y), frau(X).
