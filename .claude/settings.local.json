@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/trungdam/Documents/Learning/Medieninformatik remote prune origin)",
+      "Bash(git -C /Users/trungdam/Documents/Learning/Medieninformatik branch -a)"
+    ]
+  }
+}
