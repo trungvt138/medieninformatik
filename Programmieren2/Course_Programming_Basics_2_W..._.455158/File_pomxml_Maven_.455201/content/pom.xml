@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Project settings -->
+    <groupId>de.hawhamburg</groupId>
+    <artifactId>SoftwareTest</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <!-- Java settings -->
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Shared version properties -->
+        <mockito.version>5.17.0</mockito.version>
+        <pitest-version>1.19.1</pitest-version>
+        <maven-surefire-plugin-version>3.5.3</maven-surefire-plugin-version>
+    </properties>
+
+    <dependencies>
+        <!-- JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.12.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Truth JUnit extension that adds assertThat (alternative: AssertJ) -->
+        <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <version>1.4.4</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- AssertJ JUnit extension that adds assertThat (alternative: Truth) -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.assertj</groupId>-->
+        <!--            <artifactId>assertj-core</artifactId>-->
+        <!--            <version>3.27.3</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+        <!-- PIT mutation tests. -->
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest</artifactId>
+            <version>${pitest-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>1.2.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Needed to remove the Mockito warnings. -->
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin-version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- pitest code mutations during unit tests -->
+            <!-- To start a mutation test with all mutators, run the following command by double pressing CTRL: -->
+            <!-- mvn test-compile org.pitest:pitest-maven:mutationCoverage -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest-version}</version>
+                <configuration>
+                    <!-- Define which packages will be mutated / used for pitest. -->
+                    <targetClasses>
+                        <param>de.hawhamburg*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>de.hawhamburg*</param>
+                    </targetTests>
+                    <mutators>
+                        <!-- Activate all available mutators. -->
+                        <mutator>ALL</mutator>
+                    </mutators>
+                </configuration>
+            </plugin>
+
+            <!-- Removes inline-mock warning when using Mockito -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin-version}</version>
+                <configuration>
+                    <!-- Dynamically load mockito as an agent. -->
+                    <!-- A Java agent is basically a piece of software that can modify the behavior of the
+                         Java Virtual Machine (JVM) during runtime. In contrast to normal libraries or dependencies that
+                         are called directly by the application, agents "hack" into the JVM and can therefore make more
+                         far-reaching changes (e.g., byte code manipulations). -->
+                    <argLine>
+					    -XX:+EnableDynamicAgentLoading
+                        -Dnet.bytebuddy.experimental=true
+                        -javaagent:${user.home}/.m2/repository/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                    </argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
