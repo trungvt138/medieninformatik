@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>moodle.haw-hamburg.de - [INF.26S] Programming Basics 2 (Medieninformatik) · Schwarze</title>
+    <link rel="stylesheet" type="text/css" href="..//shared/moodle.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+    <div class="d-flex flex-column h-100">
+        <nav class="navbar navbar-light bg-white border-bottom">
+            <div class="container-fluid p-0">
+                <a class="navbar-brand" href="https://moodle.haw-hamburg.de" title="moodle.haw-hamburg.de">
+                    moodle.haw-hamburg.de
+                </a>
+            </div>
+        </nav>
+        <main class="container-fluid mt-2 flex-grow-1 flex-shrink-1">
+            <div>
+                <h1><a href="../index.html">[INF.26S] Programming Basics 2 (Medieninformatik) · Schwarze</a></h1>
+                <p>INF.26S.PB2_Schwarze</p>
+                    <h2>
+        Callbacks: Lösungen
+    </h2>
+
+    <div class="alert alert-info alert-block">
+        This page is part of the content downloaded from <a href="https://moodle.haw-hamburg.de/mod/resource/view.php?id=435543">Callbacks: Lösungen</a> on Friday, 17 April 2026, 1:31 PM. Note that some content and any files larger than 50 MB are not downloaded.    </div>
+
+    <h3>Description</h3>
+    <div>
+        <p>Die Lösung bei der Youtube Aufgabe an der Stelle <br /><br />void subscribe(User subscriber) { subscriber.subscribers.add(this); }<br /><br />ist sehr verwirrend geschrieben. <br /><br />Nehmt stattdessen eher <span style="background-color:#ffcf35;">otherUser</span> als <span style="background-color:#ffcf35;">subscriber.<br /><br /></span></p>
+<p>Siehe hier:</p>
+<div style="background-color:#131314;color:#ebebeb;">
+<pre style="font-family:'JetBrains Mono', monospace;"><span style="color:#499936;font-style:italic;">/**<br /></span><span style="color:#499936;font-style:italic;"> * Registriert eine Abhängigkeit (Subscription).<br /></span><span style="color:#499936;font-style:italic;"> * * ACHTUNG BEI DER LOGIK:<br /></span><span style="color:#499936;font-style:italic;"> * Wenn ich (this) sage: "Ich möchte 'otherUser' abonnieren", dann muss ich mich<br /></span><span style="color:#499936;font-style:italic;"> * in die Liste der Abonnenten von 'otherUser' eintragen.<br /></span><span style="color:#499936;font-style:italic;"> * * Im Code hier ist der Parametername 'subscriber' etwas irreführend gewählt.<br /></span><span style="color:#499936;font-style:italic;"> * Im Kontext von main `grace.subscribe(ada)` ist `grace` = `this` und `ada` = Parameter.<br /></span><span style="color:#499936;font-style:italic;"> * Grace möchte Ada abonnieren.<br /></span><span style="color:#499936;font-style:italic;"> */<br /></span><span style="color:#ed864a;">void </span><span style="color:#ffcf40;">subscribe</span>(<span style="color:#ffffff;">User otherUser</span>) {<br />    <span style="color:#7ec3e6;">// Wir greifen auf das Set 'subscribers' des ANDEREN Users zu und fügen UNS SELBST (this) hinzu.<br /></span><span style="color:#7ec3e6;">    // Da 'subscribers' private ist, dürfen wir hier nur zugreifen, weil wir uns in derselben Klasse befinden.<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ffffff;">otherUser</span>.<span style="color:#ed94ff;">subscribers</span>.add(<span style="color:#ed864a;">this</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span>}</pre>
+</div>
+<p><br />Hier ist auch ein angepasste Main Methode, die das deutlicher machen sollte:</p>
+<div style="background-color:#131314;color:#ebebeb;">
+<pre style="font-family:'JetBrains Mono', monospace;"><span style="color:#ed864a;">public static void </span><span style="color:#ffcf40;">main</span>(<span style="color:#ffffff;">String</span>[] <span style="color:#ffffff;">args</span>) {<br />    <span style="color:#7ec3e6;">// Erstellung der Akteure (User).<br /></span><span style="color:#7ec3e6;">    // var (Local Variable Type Inference) wird genutzt, um den Code prägnanter zu halten.<br /></span><span style="color:#7ec3e6;">    // Der Compiler leitet den Typ 'User' automatisch ab.<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ed864a;">var </span><span style="color:#ffffff;">grace </span>= <span style="color:#ed864a;">new </span>User(<span style="color:#54b33e;">"Grace"</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#ed864a;">var </span><span style="color:#ffffff;">ada </span>= <span style="color:#ed864a;">new </span>User(<span style="color:#54b33e;">"Ada"</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#ed864a;">var </span><span style="color:#ffffff;">alan </span>= <span style="color:#ed864a;">new </span>User(<span style="color:#54b33e;">"Alan"</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#ed864a;">var </span><span style="color:#ffffff;">linus </span>= <span style="color:#ed864a;">new </span>User(<span style="color:#54b33e;">"Linus"</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;"><br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#7ec3e6;">// --- Wiring-Phase (Vernetzung der Beobachter) ---<br /></span><span style="color:#7ec3e6;"><br /></span><span style="color:#7ec3e6;">    // Grace möchte Updates von Ada erhalten.<br /></span><span style="color:#7ec3e6;">    // In der Terminologie des Observer-Patterns: Grace (Observer) registriert sich bei Ada (Subject).<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ffffff;">grace</span>.subscribe(<span style="color:#ffffff;">ada</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;"><br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#7ec3e6;">// Alan abonniert Ada. Ada hat nun zwei Abonnenten (Grace, Alan).<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ffffff;">alan</span>.subscribe(<span style="color:#ffffff;">ada</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;"><br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#7ec3e6;">// Grace abonniert Alan.<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ffffff;">grace</span>.subscribe(<span style="color:#ffffff;">alan</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;"><br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#7ec3e6;">// Alan abonniert Grace. (Gegenseitiges Abonnement ist möglich).<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ffffff;">alan</span>.subscribe(<span style="color:#ffffff;">grace</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;"><br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#7ec3e6;">// Linus abonniert Grace. Grace hat nun zwei Abonnenten (Alan, Linus).<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ffffff;">linus</span>.subscribe(<span style="color:#ffffff;">grace</span>)<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;"><br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#7ec3e6;">// --- Trigger-Phase (Ereignisse auslösen) ---<br /></span><span style="color:#7ec3e6;"><br /></span><span style="color:#7ec3e6;">    // Grace lädt ein Video hoch.<br /></span><span style="color:#7ec3e6;">    // Erwartung: Ihre Abonnenten (Alan und Linus) werden benachrichtigt.<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ffffff;">grace</span>.upload(<span style="color:#ed864a;">new </span>Video(<span style="color:#54b33e;">"Bugs, Bugs, Bugs"</span>))<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;"><br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#7ec3e6;">// Alan lädt ein Video hoch.<br /></span><span style="color:#7ec3e6;">    // Erwartung: Sein Abonnent (Grace) wird benachrichtigt.<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ffffff;">alan</span>.upload(<span style="color:#ed864a;">new </span>Video(<span style="color:#54b33e;">"Enigma 2025"</span>))<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;"><br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#7ec3e6;">// Ada lädt ein Video hoch.<br /></span><span style="color:#7ec3e6;">    // Erwartung: Ihre Abonnenten (Grace und Alan) werden benachrichtigt.<br /></span><span style="color:#7ec3e6;">    </span><span style="color:#ffffff;">ada</span>.upload(<span style="color:#ed864a;">new </span>Video(<span style="color:#54b33e;">"Spinning Code"</span>))<span style="color:#ed864a;font-weight:bold;">;<br /></span><span style="color:#ed864a;font-weight:bold;"><br /></span><span style="color:#ed864a;font-weight:bold;">    </span><span style="color:#7ec3e6;">/* Die Ausgabe bestätigt, dass das Push-Prinzip funktioniert:<br /></span><span style="color:#7ec3e6;">       Der Uploader (Subject) "pusht" die Information aktiv an die Abonnenten (Observer).<br /></span><span style="color:#7ec3e6;"><br /></span><span style="color:#7ec3e6;">        Alan has been notified of a new video 'Bugs, Bugs, Bugs' by Grace<br /></span><span style="color:#7ec3e6;">        Linus has been notified of a new video 'Bugs, Bugs, Bugs' by Grace<br /></span><span style="color:#7ec3e6;">        Grace has been notified of a new video 'Enigma 2025' by Alan<br /></span><span style="color:#7ec3e6;">        Alan has been notified of a new video 'Spinning Code' by Ada<br /></span><span style="color:#7ec3e6;">        Grace has been notified of a new video 'Spinning Code' by Ada<br /></span><span style="color:#7ec3e6;"><br /></span><span style="color:#7ec3e6;">     */<br /></span>}</pre>
+</div>
+<p><span style="background-color:#ffcf35;"><br /><br /></span></p>
+<div style="background-color:#131314;color:#ebebeb;">
+<pre style="font-family:'JetBrains Mono', monospace;"> </pre>
+</div>
+    </div>
+    <hr>
+
+    <div>
+        <h3>Files and subfolders</h3>
+        <div>
+
+            <ul>
+                <li><a href="content/callback_loesungen.pdf" title="View the file callback_loesungen.pdf">callback_loesungen.pdf</a></li>
+            </ul>
+        </div>
+    </div>
+    <hr>
+
+            </div>
+        </main>
+        <footer id="page-footer" class="py-3">
+            <div class="container">
+                <div>This file is part of the content downloaded from <a href="https://moodle.haw-hamburg.de/course/view.php?id=10503">[INF.26S] Programming Basics 2 (Medieninformatik) · Schwarze</a> by Trung Dam on Friday, 17 April 2026, 1:31 PM.</div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
