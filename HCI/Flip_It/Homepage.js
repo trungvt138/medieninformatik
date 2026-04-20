@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
 
 export default function Homepage() {
@@ -9,12 +9,16 @@ export default function Homepage() {
       <View style={styles.horizontalRuler} />
       {/* <Text style={styles.text}>Welcome to FlipIt!</Text> */}
       {/* <StatusBar style="auto" /> */}
-      <Image source={require('public/images/plus-circle.png')} style={styles.plusCircle}/>
+      <View style={styles.plusCircleView}>
+        <TouchableOpacity activeOpacity={0.6}>
+          <Image source={require('./assets/app/plus-circle.png')} style={styles.plusCircle} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -42,8 +46,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     paddingTop: 28
   },
+  plusCircleView: {
+    paddingTop: 212
+  },
   plusCircle: {
     width: 150,
     height: 150,
-  }
+    alignSelf: 'center'
+  },
 });
