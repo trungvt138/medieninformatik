@@ -1,0 +1,3 @@
+[submodule "HCI/Flip_It"]
+	path = HCI/Flip_It
+	url = https://github.com/trungvt138/flip_it.git
