@@ -1,6 +1,13 @@
 zip
 .DS_Store
 
+# VirtualBox VM files
+*.vdi
+*.nvram
+*.vbox
+*.vbox-prev
+Informatik2/OpenSuse_15.6_leer/
+
 ../node_modules
 
 # Logs
