@@ -1,0 +1,3 @@
+[submodule "Graphics:AV/py101-media-informatics"]
+	path = Graphics:AV/py101-media-informatics
+	url = https://github.com/TTTatHAW/py101-media-informatics.git
