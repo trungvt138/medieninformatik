@@ -2,6 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../GraphicsAV/py101-media-informatics" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../HCI/Flip_It" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/1.Termin/online-resume" vcs="Git" />
   </component>
 </project>
