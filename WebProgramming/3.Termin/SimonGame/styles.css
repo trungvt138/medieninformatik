@@ -24,6 +24,12 @@ body {
   width: 200px;
   border: 10px solid black;
   border-radius: 20%;
+  align-content: center;
+}
+
+.icn {
+  width: 60%;
+  height: 60%;
 }
 
 .game-over {

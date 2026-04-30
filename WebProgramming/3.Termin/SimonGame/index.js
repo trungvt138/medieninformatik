@@ -47,7 +47,7 @@ function checkAnswer(userChosenColor) {
         }
         $("#level-title").text("Wrong Color! Press Any Key To Start Over!").append("<h2 id=\"level-title\">Highest Level: " + highestLevel + "</h2>");
         $("h2").css("font-size", "1.5rem");
-        new Audio("sounds/wrong.mp3").play();
+        new Audio("./assets/sounds/wrong.mp3").play();
         $("body").addClass("game-over");
         return false;
     }
@@ -71,7 +71,7 @@ function animateButtonPressed(currentColor) {
 }
 
 function playSound(currentColor) {
-    new Audio("sounds/"+currentColor+".mp3").play();
+    new Audio("./assets/sounds/"+currentColor+".mp3").play();
 }
 
 function startOver() {
