@@ -1,6 +1,6 @@
 [submodule "GraphicsAV/py101-media-informatics"]
 	path = GraphicsAV/py101-media-informatics
-	url = https://github.com/TTTatHAW/py101-media-informatics.git
+	url = https://github.com/trungvt138/py101-media-informatics
 [submodule "HCI/Flip_It"]
 	path = HCI/Flip_It
 	url = https://github.com/trungvt138/flip_it.git

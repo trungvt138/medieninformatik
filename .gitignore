@@ -139,3 +139,6 @@ dist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Maven build artifacts
+**/target/
