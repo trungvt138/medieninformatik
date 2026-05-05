@@ -12,14 +12,12 @@ class Task {
         this.isCompleted = false;
     }
 
-    greet() {
-        console.log("Hello I'm " + this.name)
-    }
-
     createComponent() {
         const taskComp = document.createElement("div");
         const taskTitle = document.createElement("p");
         const checkBox = document.createElement("input");
+
+        taskComp.setAttribute('class', 'task');
 
         taskTitle.textContent = this.name;
 
@@ -66,15 +64,41 @@ taskInput.addEventListener("keydown", function (event) {
     }
 })
 
-allBtn.addEventListener("click", render);
+function renderAll() {
+    taskCont.innerHTML = "";
+    for (const task of taskList) {
+        let t = task.createComponent();
+        taskCont.appendChild(t);
+    }
+}
 
-activeBtn.addEventListener("click",
-    render(taskList.filter(task => task.isCompleted == false)))
+function renderActive() {
+    taskCont.innerHTML = "";
+    let temp = taskList.filter(t => t.isCompleted == false);
+    for (const task of temp) {
+        let t = task.createComponent();
+        taskCont.appendChild(t);
+    }
+}
 
-completedBtn.addEventListener("click",
-    render(taskList.filter(task => task.isCompleted == true)));
+function renderCompleted() {
+    taskCont.innerHTML = "";
+    let temp = taskList.filter(t => t.isCompleted == true);
+    for (const task of temp) {
+        let t = task.createComponent();
+        taskCont.appendChild(t);
+    }
+}
 
-clearCompletedBtn.addEventListener("click", function (taskList) {
-    taskList = taskList.filter(taskList.filter(task => task.isCompleted == false));
-    render();
-})
+function renderClearCompleted() {
+    taskList = taskList.filter(t => t.isCompleted == false);
+    renderAll();
+}
+
+allBtn.addEventListener("click", renderAll);
+
+activeBtn.addEventListener("click", renderActive)
+
+completedBtn.addEventListener("click", renderCompleted);
+
+clearCompletedBtn.addEventListener("click", renderClearCompleted)
