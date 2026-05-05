@@ -4,7 +4,9 @@ const taskCont = document.getElementById("task_cont");
 const allBtn = document.getElementById("all");
 const activeBtn = document.getElementById("active");
 const completedBtn = document.getElementById("completed");
-const clearCompletedBtn = document.getElementById("clear_completed")
+const clearCompletedBtn = document.getElementById("clear_completed");
+
+const countOutput = document.getElementById("count");
 
 class Task {
     constructor(name) {
@@ -25,8 +27,16 @@ class Task {
         checkBox.checked = this.isCompleted;
 
         checkBox.addEventListener("change", () => {
-            this.isCompleted = checkBox.checked; // updates the task object
-            console.log(this.name, "completed:", this.isCompleted);
+            if (!this.isCompleted) {
+                this.isCompleted = checkBox.checked; // updates the task object
+                count--;
+            }
+            else {
+                this.isCompleted = false
+                count++;
+            }
+            renderCount();
+            // console.log(this.name, "completed:", this.isCompleted);
         });
 
         taskComp.appendChild(checkBox);
@@ -37,6 +47,11 @@ class Task {
 }
 
 let taskList = []
+let count = 0
+
+function renderCount() {
+    countOutput.textContent = `${count} tasks left`;
+}
 
 function addTask() {
     const title = taskInput.value.trim();
@@ -46,17 +61,19 @@ function addTask() {
     taskList.push(task);
     taskInput.value = "";
     taskCont.appendChild(task.createComponent());
+    count++;
+    renderCount();
 }
 
-function render(list = taskList) {
-    //create a div contains input type checkbox and the task
-    taskCont.innerHTML = "";
-    for (const task of list) {
-        let t = task.createComponent();
-        taskCont.appendChild(t);
-
-    }
-}
+// function render(list = taskList) {
+//     //create a div contains input type checkbox and the task
+//     taskCont.innerHTML = "";
+//     for (const task of list) {
+//         let t = task.createComponent();
+//         taskCont.appendChild(t);
+//     }
+//     renderC
+// }
 
 taskInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
@@ -92,6 +109,8 @@ function renderCompleted() {
 
 function renderClearCompleted() {
     taskList = taskList.filter(t => t.isCompleted == false);
+    count = taskList.length;
+    renderCount();
     renderAll();
 }
 
@@ -102,3 +121,5 @@ activeBtn.addEventListener("click", renderActive)
 completedBtn.addEventListener("click", renderCompleted);
 
 clearCompletedBtn.addEventListener("click", renderClearCompleted)
+
+renderCount();
