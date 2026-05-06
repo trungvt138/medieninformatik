@@ -20,7 +20,9 @@ class Task {
         const checkBox = document.createElement("input");
 
         taskComp.setAttribute('class', 'task');
-
+        taskComp.setAttribute("draggable", "true");
+        taskComp.setAttribute("ondragstart", "dragStart(event)");
+        taskComp.setAttribute("ondragend", "dragEnd(event)");
         taskTitle.textContent = this.name;
 
         checkBox.type = "checkbox";
@@ -36,7 +38,6 @@ class Task {
                 count++;
             }
             renderCount();
-            // console.log(this.name, "completed:", this.isCompleted);
         });
 
         taskComp.appendChild(checkBox);
@@ -65,43 +66,15 @@ function addTask() {
     renderCount();
 }
 
-// function render(list = taskList) {
-//     //create a div contains input type checkbox and the task
-//     taskCont.innerHTML = "";
-//     for (const task of list) {
-//         let t = task.createComponent();
-//         taskCont.appendChild(t);
-//     }
-//     renderC
-// }
-
 taskInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
         addTask();
     }
 })
 
-function renderAll() {
+function render(list = taskList) {
     taskCont.innerHTML = "";
-    for (const task of taskList) {
-        let t = task.createComponent();
-        taskCont.appendChild(t);
-    }
-}
-
-function renderActive() {
-    taskCont.innerHTML = "";
-    let temp = taskList.filter(t => t.isCompleted == false);
-    for (const task of temp) {
-        let t = task.createComponent();
-        taskCont.appendChild(t);
-    }
-}
-
-function renderCompleted() {
-    taskCont.innerHTML = "";
-    let temp = taskList.filter(t => t.isCompleted == true);
-    for (const task of temp) {
+    for (const task of list) {
         let t = task.createComponent();
         taskCont.appendChild(t);
     }
@@ -111,15 +84,34 @@ function renderClearCompleted() {
     taskList = taskList.filter(t => t.isCompleted == false);
     count = taskList.length;
     renderCount();
-    renderAll();
+    render();
 }
 
-allBtn.addEventListener("click", renderAll);
+function dragStart(event) {
+    event.dataTransfer.setData("taskdiv", event.target.id);
 
-activeBtn.addEventListener("click", renderActive)
+}
 
-completedBtn.addEventListener("click", renderCompleted);
+function dragEnd(event) {
+    
+}
 
-clearCompletedBtn.addEventListener("click", renderClearCompleted)
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function drop(event) {
+    const data = event.dataTransfer.getData("taskdiv");
+    console.log(document.getElementById(data))
+    event.target.appendChild(document.getElementById(data))
+}
+
+allBtn.addEventListener("click",() => render());
+
+activeBtn.addEventListener("click",() => render(taskList.filter(t => t.isCompleted == false)))
+
+completedBtn.addEventListener("click",() => render(taskList.filter(t => t.isCompleted == true)));
+
+clearCompletedBtn.addEventListener("click",renderClearCompleted)
 
 renderCount();
