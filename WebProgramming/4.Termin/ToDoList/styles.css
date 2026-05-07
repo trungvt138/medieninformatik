@@ -84,6 +84,11 @@ body {
     color: #494C6B;
 }
 
+.task.completed p {
+    text-decoration: line-through;
+    color: #9495a5;
+}
+
 .task input[type="checkbox"] {
     width: 20px;
     height: 20px;
