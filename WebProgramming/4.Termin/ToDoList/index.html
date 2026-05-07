@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>My To Do List</title>
+</head>
+
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <h1>TODO</h1>
+            <input type="text" id="task_input" placeholder="What to do?">
+        </div>
+    </div>
+    
+    <div class="content">
+        <div id="task_cont" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+        </div>
+
+        <div class="function">
+            <h4 id="count"> tasks left</h4>
+            <button id="all">All</button>
+            <button id="active">Active</button>
+            <button id="completed">Completed</button>
+            <button id="clear_completed">Clear Completed</button>
+        </div>
+    </div>
+    <footer class="footer">© Trung Dam 2026. All Rights Reserved</footer>
+    <script src="index.js"></script>
+</body>
+
+</html>
