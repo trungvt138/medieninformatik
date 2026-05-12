@@ -1,0 +1,14 @@
+{
+  // KI-Tutor-Regeln automatisch laden
+  "github.copilot.chat.instructions": [
+    { "file": ".github/copilot-instructions.md" }
+  ],
+
+  // Python-Umgebung
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+
+  // Jupyter-Einstellungen
+  "jupyter.notebookFileRoot": "${workspaceFolder}",
+  "jupyter.askForKernelRestart": false
+}
