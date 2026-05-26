@@ -1,0 +1,15 @@
+Navbar Buttons:
+Home
+Service
+Contact
+
+Body Article Text:
+
+h1 Headline:
+Dings Bums oder so
+
+p Text:
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et.
+
+Button:
+Na Klar
