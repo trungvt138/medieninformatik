@@ -1,0 +1,30 @@
+Values and ranges:
+- House colors: red, blue, green, yellow, ivory
+- Nationnalities: english, norwegian, spaniard, ukrainian, japanese
+- Pets: snake, fox, horse, dog, zebra
+- Cigarettes: OldGold, Kools, Chesterfields, LuckyStrike, Parliaments
+- Drinks: coffee, tea, milk, juice, water
+- Orders of houses: 1, 2, 3, 4, 5
+
+Connections:
+2.  color(english) = red
+3.  pet(spaniard) = dog
+4.  color(coffee) = green
+5.  drink(ukrainian) = tea
+6.  order(green) = order(ivory) + 1
+7.  pet(OldGold) = snake
+8.  color(Kools) = yellow
+9.  order(milk) = 3
+10. order(norwegian) = 1
+11. |order(Chesterfields) - order(fox)| = 1
+12. |order(Kools) - order(horse)| = 1
+13. drink(LuckyStrike) = juice
+14. smoke(japanese) = Parliaments
+15. order(blue) = 2
+
+== 
+6, 15 
+=> (order(green), order(ivory)) = {(4, 3),         (5, 4)}
+=> (order(red), order(yellow))  = {(1, 5), (5, 1), (1, 3), (3, 1)}
+
+* 
