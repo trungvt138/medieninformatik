@@ -93,5 +93,13 @@
 - **Begriffe erklären:** Hook, State, Render, Props – nicht voraussetzen, kurz einordnen wenn du sie benutzt
 - **Tempo:** Bei Code-Teilen langsam, Zeile für Zeile erklären – die Leute sehen das zum ersten Mal
 - **Interaktion:** Nach der TodoList fragen: "Was wenn die Navbar die Anzahl offener Todos zeigen soll? Wie machen wir das?" → Überleitung zu Context
+- **React DevTools:** Chrome Extension "React Developer Tools" vorher installieren. Nach dem Counter oder der TodoList kurz DevTools (F12) öffnen → Tab "Components" → auf die Komponente klicken → zeigt Props, State und Hooks live. Auf einen Button klicken und zeigen wie sich `count` oder `todos` in Echtzeit ändert. Macht State super greifbar.
 - **Redux:** Noch nicht zu tief reingehen, nur Ausblick – "damit beschäftigen wir uns später ausführlicher" ist völlig okay
 - **Falls die Zeit knapp wird:** Redux-Teil kürzen, der ist am wenigsten kritisch
+
+---
+
+## Falls jemand fragt...
+
+**"Warum steht key auf `<Todo>` und nicht auf dem `<li>`?"**
+→ "`key` ist ein spezielles React-Attribut. Es wird nur auf dem Element gebraucht, das in einer map() erzeugt wird – also auf `<Todo>`. React benutzt key intern um zu tracken welches Element welches ist. Aber key kommt nicht als prop an – wenn du in der Todo-Komponente `props.key` liest, ist das undefined. Deshalb übergeben wir die id nochmal separat als eigene Prop, falls wir sie in der Kind-Komponente brauchen."
