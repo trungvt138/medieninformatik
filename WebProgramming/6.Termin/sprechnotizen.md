@@ -1,55 +1,97 @@
 # Sprechnotizen – State Management in React (20 Min)
 
-## Folie 1 – Titel (30 Sek)
-"Hi zusammen, ich präsentiere heute State Management in React. Wir gehen von den Basics bis zu globalen Lösungen – also alles was ihr braucht um State in euren Projekten sauber zu verwalten."
+## 1 – Was ist State? (3 Min)
+"Hi zusammen, heute geht's um State Management in React. Aber erstmal ganz von vorne – was ist State überhaupt?"
 
-## Folie 2 – Agenda (30 Sek)
-"Kurzer Überblick: Wir starten mit dem Problem – warum brauchen wir State Management überhaupt? Dann gehen wir durch die React-eigenen Tools – useState kennt ihr ja schon, dann useReducer und Context API. Am Ende schauen wir uns kurz externe Libraries an und ich geb euch ne Faustregel wann man was nimmt."
+"Stellt euch eine ganz normale Webseite vor. Die hat HTML, CSS, sieht hübsch aus – aber sie ist statisch. Nichts verändert sich. State ist das, was eine App dynamisch macht. State sind Daten, die sich verändern während der User die App benutzt."
 
-## Folie 3 – Warum State Management? (1,5 Min)
-"State sind die Daten die sich ändern während die App läuft. Das kann alles sein – was der User in ein Formular tippt, Daten die wir vom Server holen, ob ein Modal gerade offen ist, oder ob jemand eingeloggt ist. Das Problem: In einer großen App brauchen viele verschiedene Komponenten denselben State. Und da wird's schnell unübersichtlich."
+"Ein paar Beispiele: Ihr klickt auf einen Button und ein Zähler geht hoch – die Zahl ist State. Ihr tippt etwas in ein Suchfeld – der Text ist State. Ihr loggt euch ein – ob ihr eingeloggt seid oder nicht, ist State. Ein Modal das auf- und zugeht – ob es offen ist, ist State."
 
-## Folie 4 – Prop Drilling (2 Min)
-"Prop Drilling heißt: Wir reichen Props durch jede Ebene der Komponentenhierarchie weiter. Hier im Beispiel: App hat den User-State. UserAvatar ganz unten braucht den. Aber dazwischen liegen Layout und Sidebar – die brauchen den User überhaupt nicht. Die reichen ihn nur durch. Bei 2-3 Ebenen geht das noch, aber stellt euch vor da sind 5 oder 6 Ebenen dazwischen. Das wird schnell zum Wartungsproblem – wenn sich die Props ändern, muss man überall anpassen."
+"Also kurz gesagt: Alles was sich zur Laufzeit ändern kann, ist State. Und State Management heißt einfach: Wie organisieren wir diese Daten in unserer App?"
 
-## Folie 5 – useState Recap (1,5 Min)
-"Kurzer Recap: useState kennt ihr schon – einfach, intuitiv, perfekt für lokalen State. Counter, Toggle, ein einzelner String – dafür ist useState super. Aber es hat Grenzen: Wenn ihr mehrere States habt die zusammengehören, wenn Updates voneinander abhängen, oder wenn eine andere Komponente den State braucht."
+"Es gibt verschiedene Level. Manchmal braucht nur eine einzige Komponente den State – das ist lokaler State. Manchmal brauchen viele Komponenten denselben State – das ist globaler State. Und je nachdem wie komplex das wird, gibt es verschiedene Werkzeuge. Wir fangen heute ganz einfach an und arbeiten uns hoch."
 
-## Folie 6 – useState Grenzen Code (2 Min)
-"Hier seht ihr das Problem konkret. Wir haben 3 States: items, loading, error. Die gehören zusammen – es ist ein Fetch-Vorgang. Aber bei jedem Schritt müssen wir alle 3 einzeln setzen. setLoading true, setError null – das vergisst man leicht. Und wenn ein Fehler kommt, muss man wieder setLoading false setzen. Das ist fehleranfällig und unübersichtlich. Genau dafür gibt's useReducer."
+---
 
-## Folie 7 – useReducer Konzept (2 Min)
-"useReducer hat 3 Teile. State – ein einziges Objekt mit allem Zustand. Action – ein Zettel der sagt was passieren soll, zum Beispiel type fetch_start. Und der Reducer – eine Funktion die den alten State plus die Action nimmt und den neuen State zurückgibt. Statt 3 mal setState zu rufen, schicken wir eine einzige Action: dispatch fetch_start. Der Reducer weiß dann: loading auf true, error auf null. Alles in einem Schritt, keine Chance was zu vergessen."
+## 2 – useState: Counter + Custom Hook – Live Coding (5 Min)
+"Das erste Werkzeug ist useState – ein sogenannter Hook, den React uns gibt. Damit können wir einer Komponente einen State geben. Ich zeig euch das jetzt live mit einem einfachen Counter."
 
-## Folie 8 – useReducer Code (1,5 Min)
-"So sieht das konkret aus. Der Reducer hat einen switch-case für jeden Action-Type. fetch_start setzt loading true und error null. fetch_success setzt die Items und loading false. fetch_error setzt die Fehlermeldung. Alles konsistent, an einer Stelle, und super einfach zu testen – der Reducer ist ja nur eine reine Funktion."
+*[Counter coden / zeigen]*
 
-## Folie 9 – Context API (2 Min)
-"Context API löst das Prop Drilling Problem. In 3 Schritten: Erstens – Context erstellen mit createContext. Zweitens – den Provider um eure App oder einen Teil davon wrappen und den Wert übergeben. Drittens – in jeder beliebigen Komponente, egal wie tief verschachtelt, mit useContext direkt auf den Wert zugreifen. Kein Props-Weiterreichen mehr nötig."
+"Schauen wir uns das Zeile für Zeile an. Oben importieren wir useState aus React. Dann in der Komponente: `const [count, setCount] = useState(0)`. Das gibt uns zwei Sachen zurück – den aktuellen Wert, hier `count`, und eine Funktion um den Wert zu ändern, `setCount`. Die 0 in den Klammern ist der Startwert."
 
-## Folie 10 – Context vs Prop Drilling (1 Min)
-"Links seht ihr nochmal das Prop Drilling – der User wird durch jede Ebene gereicht. Rechts mit Context: Der Provider wrapped alles, und Avatar kann direkt zugreifen. Layout und Sidebar müssen nichts mehr weiterreichen."
+"Dann haben wir drei Funktionen: increment ruft setCount auf mit count + 1, decrement mit count - 1, und reset setzt auf 0 zurück. Unten im Return rendern wir den Wert und drei Buttons."
 
-## Folie 11 – Context Grenzen (1,5 Min)
-"Aber Context hat auch Grenzen. Erstens: Jede Änderung am Context-Wert rendert alle Consumer neu – auch wenn sie nur einen Teil brauchen. Zweitens: Für schnelle Updates wie Slider oder Drag and Drop ist Context zu langsam. Drittens: Viele Contexts führen zu Provider Hell – Provider in Provider in Provider. Trotzdem perfekt für Sachen die sich selten ändern: Theme, Auth, Sprache."
+"Das Wichtige: Wir ändern count nie direkt. Wir rufen immer setCount auf. Warum? Weil React dann weiß, dass sich was geändert hat, und die Komponente neu rendert – also die Anzeige aktualisiert."
 
-## Folie 12 – Externe Libraries (2 Min)
-"Wenn Context nicht reicht, gibt es externe Libraries. Redux ist der Klassiker seit 2015 – sehr mächtig, globaler Store, aber relativ viel Boilerplate. Redux Toolkit macht das deutlich angenehmer. Zustand ist der moderne Trend – minimal API, kein Provider nötig, und die Syntax ist extrem einfach. Hier seht ihr: ein Store in 4 Zeilen. In der Community wird Zustand immer beliebter, weil es den sweet spot trifft zwischen Einfachheit und Mächtigkeit."
+"Und noch was: Dieser State ist lokal. Nur diese eine Counter-Komponente kennt den Wert. Keine andere Komponente weiß was count gerade ist."
 
-## Folie 13 – Vergleich (1,5 Min)
-"Hier nochmal im Überblick. useState – niedrige Komplexität, lokal, für einfache Werte. useReducer – mittlere Komplexität, auch lokal, aber für komplexe Logik. Context – niedrig, global, für Theme und Auth und sowas. Redux – hohe Komplexität, global, für große Enterprise Apps. Zustand – niedrige Komplexität, global, und wird gerade zum modernen Standard. Die Faustregel: Starte einfach mit useState, wird's komplex nimm useReducer, brauchst du's global nimm Context oder Zustand."
+"Jetzt schaut euch die Komponente nochmal an. Der State, die drei Funktionen und das JSX – alles in einer Komponente. Das geht hier noch, aber stellt euch vor die Logik wird komplexer. Dann wird das schnell unübersichtlich."
 
-## Folie 14 – Zusammenfassung (30 Sek)
-"Sechs Takeaways: State Management heißt Daten zur Laufzeit verwalten. useState für einfache lokale Werte. useReducer für komplexe zusammenhängende Logik. Context löst Prop Drilling. Externe Libs für große Projekte. Und das Wichtigste: Starte einfach und skaliere bei Bedarf."
+"Dafür gibt es Custom Hooks. Das Prinzip: Wir nehmen die State-Logik – also useState und die Funktionen – und packen sie in eine eigene Funktion. Die muss mit 'use' anfangen, zum Beispiel useCounter. Die Komponente selber hat dann nur noch das JSX."
 
-## Folie 15 – Fragen (Rest)
+*[useCounter Hook coden / zeigen]*
+
+"Seht ihr den Unterschied? Die Counter-Komponente ruft jetzt nur noch useCounter() auf und bekommt count, increment, decrement und reset zurück. Die ganze Logik steckt im Hook. Das hat zwei Vorteile: Erstens ist der Code übersichtlicher. Zweitens können wir den Hook wiederverwenden – wenn eine andere Komponente auch einen Counter braucht, importiert sie einfach useCounter."
+
+---
+
+## 3 – useState: TodoList – Live Coding (4 Min)
+"Okay, das war ein einzelner Zahlenwert. Jetzt wird's spannender. Wir bauen eine TodoList, auch mit useState, aber mit komplexeren Daten."
+
+*[TodoList coden / zeigen]*
+
+"Hier haben wir jetzt zwei States. `todos` ist ein Array von Objekten – jedes Todo hat eine id, einen text und ein done-Flag. `input` ist der Text im Eingabefeld. Zwei States, weil es zwei verschiedene Sachen sind."
+
+"addTodo: Wir nehmen das todos-Array und erstellen ein neues mit dem Spread-Operator – alles was vorher drin war, plus ein neues Objekt am Ende. Dann leeren wir das Input-Feld."
+
+"toggleTodo: Wir gehen mit map über alle Todos. Wenn die id passt, flippen wir das done-Flag. Alle anderen bleiben wie sie sind. Wichtig – wir verändern nie das Original, sondern erstellen immer ein neues Array."
+
+"deleteTodo: Wir filtern das Todo mit der passenden id raus."
+
+"Jetzt stellt euch mal folgendes vor: Wir wollen eine Navbar die die Anzahl der offenen Todos anzeigt. Die Navbar ist eine ganz andere Komponente. Wie kommt die an die todos ran? Selbst wenn wir einen Custom Hook useTodos bauen – wenn die Navbar useTodos() aufruft, bekommt sie ihren eigenen, separaten State. Nicht denselben! Jeder Aufruf von useState erzeugt einen neuen, unabhängigen State. Wir müssten den State also nach oben schieben und als Props durch jede Ebene weiterreichen. Das nennt man Prop Drilling – und genau das wird bei größeren Apps zum Problem."
+
+---
+
+## 4 – Context API: Level Up (5 Min)
+"Okay, Level Up. Wir haben gesehen: useState ist super für lokalen State, aber wenn mehrere Komponenten denselben State brauchen, wird's mit Props schnell unübersichtlich."
+
+"React hat dafür eine eingebaute Lösung: die Context API. Die funktioniert in drei Schritten."
+
+"Erstens: Wir erstellen einen Context mit createContext(). Das ist wie ein Container den wir später befüllen."
+
+"Zweitens: Wir wrappen unsere App – oder einen Teil davon – mit einem sogenannten Provider. Der Provider bekommt einen value – das sind die Daten die wir teilen wollen. Alle Komponenten innerhalb des Providers haben Zugriff darauf."
+
+"Drittens: In jeder Komponente, egal wie tief verschachtelt, können wir mit useContext() direkt auf den Wert zugreifen. Kein Props weiterreichen, kein Prop Drilling."
+
+"Ein praktisches Beispiel: Ein Theme-Switcher. Dark Mode und Light Mode – das braucht fast jede Komponente in der App für die Farben. Mit Context erstellen wir einen ThemeProvider, wrappen die App damit, und jede Komponente kann mit useContext direkt das aktuelle Theme lesen und zwischen dark und light wechseln."
+
+"Context ist perfekt für Dinge die sich selten ändern und von vielen Komponenten gebraucht werden: Theme, ob jemand eingeloggt ist, die Sprache der App. Für State der sich ständig und schnell ändert – zum Beispiel ein Slider oder Drag and Drop – ist Context nicht ideal, weil es Performance-Probleme geben kann."
+
+---
+
+## 5 – Redux: Ausblick (2 Min)
+"Wenn eine App richtig groß wird – viele Features, viele Komponenten, vielleicht mehrere Teams – dann kommt man manchmal auch an die Grenzen von Context. Da kommen externe Libraries ins Spiel."
+
+"Die bekannteste ist Redux. Redux hat einen sogenannten Store – eine zentrale Stelle wo der gesamte App-State lebt. Alle Änderungen laufen über feste Regeln, sogenannte Actions und Reducers. Das macht den Datenfluss sehr vorhersagbar und debugbar."
+
+"Heute nutzt man Redux Toolkit, das die Einrichtung deutlich einfacher macht als das originale Redux. Aber Redux lohnt sich wirklich erst bei größeren Projekten – für die meisten Apps reichen useState und Context völlig aus."
+
+---
+
+## 6 – Zusammenfassung & Fragen (1 Min)
+"Zusammengefasst: State sind Daten die sich zur Laufzeit ändern. useState gibt einer einzelnen Komponente einen lokalen State – perfekt für einfache Sachen wie Counter oder Formulare. Context API löst das Problem wenn mehrere Komponenten denselben State brauchen – ohne Props durch jede Ebene zu reichen. Und für richtig große Apps gibt es Redux."
+
+"Die Faustregel: Starte immer mit useState. Wenn du merkst du brauchst den State an mehreren Stellen – nimm Context. Wenn die App wirklich komplex wird – dann Redux."
+
 "Danke fürs Zuhören! Gerne Fragen."
 
 ---
 
-## Tipps für die Präsentation
-- **Tempo:** Pro Folie ca. 1-2 Minuten, bei Code-Folien langsamer
-- **Code erklären:** Zeile für Zeile durchgehen, nicht vorlesen
-- **Interaktion:** Bei Slide 4 (Prop Drilling) fragen: "Kennt ihr das Problem?" 
-- **Falls Fragen kommen zu Redux:** "Redux Toolkit ist heute Standard, niemand schreibt mehr vanilla Redux"
-- **Falls die Zeit knapp wird:** Folie 10 (Context Visual) und 11 (Context Grenzen) zusammenfassen
+## Tipps
+- **Live Coding:** Counter und TodoList vorher einmal durchüben, damit's flüssig läuft
+- **Begriffe erklären:** Hook, State, Render, Props – nicht voraussetzen, kurz einordnen wenn du sie benutzt
+- **Tempo:** Bei Code-Teilen langsam, Zeile für Zeile erklären – die Leute sehen das zum ersten Mal
+- **Interaktion:** Nach der TodoList fragen: "Was wenn die Navbar die Anzahl offener Todos zeigen soll? Wie machen wir das?" → Überleitung zu Context
+- **Redux:** Noch nicht zu tief reingehen, nur Ausblick – "damit beschäftigen wir uns später ausführlicher" ist völlig okay
+- **Falls die Zeit knapp wird:** Redux-Teil kürzen, der ist am wenigsten kritisch
