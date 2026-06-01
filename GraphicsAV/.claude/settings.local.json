@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m pip install matplotlib --break-system-packages)",
+      "Bash(MPLBACKEND=Agg python3 aufgabe6.py)"
+    ]
+  }
+}
