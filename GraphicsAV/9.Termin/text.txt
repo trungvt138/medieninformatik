@@ -1,0 +1,17 @@
+Datenrate, nicht datenreduziert: fs.N.k = 44100.16.2 = 1411200 Bit/s = 1411 kbit/s
+1411 kbit/s / 64 kbit/s = 22,05
+64 kbit/s / 44100 1/s = 1,5 Bit
+für sehr niedrige Datenrate wird auch fs reduziert
+
+1 min audio WAV = 1411 kbit/s * 60s = 10,58 MB
+1s Video:
+Speicher: dauer * fps * höhe * breite * 3 Kanäle * 8 Bit
+z.B: 1s * 30 * 1080 * 1920 * 3 * 8 = 186,6 MB => 1min = 11,3 GB (zu groß)
+
+FLAC Verfahren beim Frame vorhersagen gut für Bilder, weil Bilddifferenz fast gleich
+
+Aufgabe 9:
+Gesamt: 10 * 640 * 360 * 30 * 3 * 8 = 207,36 MB
+1. Anzahl der Frames: 30 * 10 = 300 Frames
+2. Datenmenge pro Frame: 640 * 360 * 3 * 8 = 0,69 MB
+3. 300 * 0,69MB = 207 MB
