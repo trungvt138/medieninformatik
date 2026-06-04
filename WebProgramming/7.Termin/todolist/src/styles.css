@@ -1,0 +1,133 @@
+.task {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+body {
+    margin: 0;
+    background-color: #e4e5f1;
+    position: relative;
+    padding-top: 220px;
+}
+
+.hero {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 400px;
+    z-index: 0;
+    background:
+        linear-gradient(to right, rgba(128, 0, 255, 0.5), rgba(0, 100, 255, 0.5)),
+        url("./assets/bg.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.hero-content h1 {
+    color: white;
+    font-size: 2.5rem;
+    letter-spacing: 0.5rem;
+    margin: 0;
+}
+
+.hero-content input {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+
+.content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: whitesmoke;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+#task_cont {
+    background-color: white;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background-color: white;
+    border-bottom: 1px solid #e4e5f1;
+}
+
+.task p {
+    margin: 0;
+    font-size: 1rem;
+    color: #494C6B;
+}
+
+.task.completed p {
+    text-decoration: line-through;
+    color: #9495a5;
+}
+
+.task input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    
+}
+
+.function {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background-color: white;
+    border-top: 1px solid #e4e5f1;
+}
+
+.function h4 {
+    margin: 0;
+    color: #9495a5;
+    font-weight: normal;
+    font-size: 0.85rem;
+}
+
+.function button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9495a5;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.function button:hover {
+    color: #494C6B;
+}
+
+footer {
+    text-align: center;
+    padding: 40px 0 20px 0;
+    color: #9495a5;
+    font-size: 0.85rem;
+}

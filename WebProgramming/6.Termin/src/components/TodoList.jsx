@@ -5,7 +5,7 @@ import styles from "./styles"
 
 function TodoList() {
   const { todos, input, setInput, addTodo, toggleTodo, deleteTodo } = useTodos();
-  //const { theme } = useTheme();
+  const { theme } = useTheme();
 
   return (
     <div>
@@ -14,7 +14,7 @@ function TodoList() {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Neue Aufgabe..."
-        // style={styles[theme].input}
+        style={styles[theme].input}
       />
       <button onClick={addTodo}>Hinzufügen</button>
 

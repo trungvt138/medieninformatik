@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m pip install matplotlib --break-system-packages)",
+      "Bash(MPLBACKEND=Agg python3 aufgabe6.py)",
+      "Bash(ffprobe -v error -print_format json -show_format -show_streams video.mp4)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); vs=next\\(s for s in d['streams'] if s['codec_type']=='video'\\); print\\('Container:', d['format']['format_name']\\); print\\('Codec:', vs.get\\('codec_name'\\)\\); print\\('Resolution:', vs.get\\('width'\\),'x',vs.get\\('height'\\)\\); print\\('FPS:', vs.get\\('avg_frame_rate'\\)\\); print\\('Bitrate:', d['format'].get\\('bit_rate'\\)\\); print\\('Duration:', d['format'].get\\('duration'\\)\\); print\\('Size:', d['format'].get\\('size'\\)\\)\")",
+      "Bash(python3 aufgabe11_video_optimieren.py)",
+      "Bash(python3 -c \"import sys; print\\(sys.executable\\)\")",
+      "Bash(pip3 install *)",
+      "Bash(python3 -c \"import cv2; print\\('cv2 ok'\\)\")"
+    ]
+  }
+}
