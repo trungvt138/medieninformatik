@@ -6,12 +6,10 @@ import Greeting from "./etc/Greeting";
 
 function App() {
   return (
-    // <ThemeProvider>
-    //   {/* <Navbar /> */}
-    //   <TodoList />
-    // </ThemeProvider>
-
-    <Greeting />
+    <ThemeProvider>
+      <Navbar />
+      <TodoList />
+    </ThemeProvider>
   );
 }
 
