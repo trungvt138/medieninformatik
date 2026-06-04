@@ -1,7 +1,9 @@
-import { useTodo } from "../hooks/useTodo"
+// import { useTodo } from "../hooks/useTodo"
+import { useTodoRedux } from "../hooks/TodoRedux"
 
 export default function Hero() {
-    const { text, setText, addTodo } = useTodo()
+    // const { text, setText, addTodo } = useTodo()
+    const { text, setText, addTodo } = useTodoRedux()
 
     return (
         <div className="hero">

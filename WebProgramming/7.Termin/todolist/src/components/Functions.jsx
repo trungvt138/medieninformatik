@@ -1,7 +1,9 @@
-import { useTodo } from "../hooks/useTodo"
+// import { useTodo } from "../hooks/useTodo"
+import { useTodoRedux } from "../hooks/TodoRedux"
 
 export default function Functions() {
-    const { todos, filter, setFilter, clearCompleted, clearAll } = useTodo()
+    // const { todos, filter, setFilter, clearCompleted, clearAll } = useTodo()
+    const { todos, filter, setFilter, clearCompleted, clearAll } = useTodoRedux()
 
     return (
         <div className="function">
