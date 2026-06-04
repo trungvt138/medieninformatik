@@ -8,7 +8,7 @@ function TodoList() {
   const { theme } = useTheme();
 
   return (
-    <div>
+    <div style={styles[theme].container}>
       <h2>Meine Todos</h2>
       <input
         value={input}
