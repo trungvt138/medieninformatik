@@ -1,4 +1,4 @@
-x = 59049
+x = pow(3, 35)
 
 def dreierpotenz_v1(z):
     if z < 0:
@@ -40,4 +40,5 @@ def dreierpotenz_v3(z):
     if z % 9 == 0 and z % 5 != 0 and z % 2 != 0 and z % 7 != 0 and x > 0:
         return True
     return False
+
 print(dreierpotenz_v3(x))
