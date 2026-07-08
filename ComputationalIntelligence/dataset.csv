@@ -1,0 +1,15 @@
+tag,outlook,temperature,humidity,windy,sailing
+1,sunny,hot,high,true,no
+2,sunny,hot,high,false,no
+3,overcast,hot,high,true,yes
+4,rainy,mild,high,true,yes
+5,rainy,cool,normal,true,yes
+6,rainy,cool,normal,false,no
+7,overcast,cool,normal,false,yes
+8,sunny,mild,high,true,no
+9,sunny,cool,normal,true,yes
+10,rainy,mild,normal,true,yes
+11,sunny,mild,normal,false,yes
+12,overcast,mild,high,false,yes
+13,overcast,hot,normal,true,yes
+14,rainy,mild,high,false,no
