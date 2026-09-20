@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://wof1kxlgeyl7"]
+
+[ext_resource type="Script" uid="uid://crvnxuxi04pud" path="res://clock.gd" id="1_xvcto"]
+[ext_resource type="Texture2D" uid="uid://dtd530801ukik" path="res://clock.jpg" id="2_0cpfn"]
+[ext_resource type="Texture2D" uid="uid://xspmuee86dkc" path="res://pointer.png" id="3_dbyyp"]
+
+[node name="Clock" type="Node2D" unique_id=1700682749]
+script = ExtResource("1_xvcto")
+
+[node name="ClockFace" type="Sprite2D" parent="." unique_id=875141015]
+position = Vector2(500, 300)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_0cpfn")
+
+[node name="HourHand" type="Sprite2D" parent="." unique_id=1181727717]
+position = Vector2(500, 300)
+scale = Vector2(1, 0.7)
+texture = ExtResource("3_dbyyp")
+offset = Vector2(0, -70)
+
+[node name="MinuteHand" type="Sprite2D" parent="." unique_id=1267648179]
+position = Vector2(500, 300)
+scale = Vector2(1, 0.9)
+texture = ExtResource("3_dbyyp")
+offset = Vector2(0, -70)
+
+[node name="SecondHand" type="Sprite2D" parent="." unique_id=911939232]
+position = Vector2(500, 300)
+scale = Vector2(0.2, 0.9)
+texture = ExtResource("3_dbyyp")
+offset = Vector2(0, -70)
+
+[node name="Pendulum" type="Sprite2D" parent="." unique_id=1209053419]
+position = Vector2(500, 480)
+texture = ExtResource("3_dbyyp")
+offset = Vector2(0, 70)
+
+[node name="Button" type="Button" parent="." unique_id=2047993705]
+offset_left = 761.0
+offset_top = 285.0
+offset_right = 848.0
+offset_bottom = 316.0
+text = "Start/Stop"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

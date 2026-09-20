@@ -1,4 +1,6 @@
 zip
+GraphicsAV/*.zip
+GraphicsAV/Moodle-Export-Raw/
 .DS_Store
 
 # VirtualBox VM files

@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Bildgröße
+WIDTH = 800
+HEIGHT = 800
+
+# Bereich der komplexen Ebene
+xmin = -2.0
+xmax = 1.0
+
+ymin = -1.5
+ymax = 1.5
+
+# Maximale Iterationen
+MAX_ITER = 100
+
+# Bildarray
+img = np.zeros((HEIGHT, WIDTH))
+
+
+# -----------------------------------------
+# Mandelbrot berechnen
+# -----------------------------------------
+
+for y in range(HEIGHT):
+    for x in range(WIDTH):
+
+        # Pixel -> komplexe Zahl
+        real = xmin + (x / WIDTH) * (xmax - xmin)
+
+        imag = ymin + (y / HEIGHT) * (ymax - ymin)
+
+        c = complex(real, imag)
+
+        z = 0
+
+        iteration = 0
+
+        # Iteration
+        while abs(z) <= 2 and iteration < MAX_ITER:
+
+            z = z**2 + c
+
+            iteration += 1
+
+        if abs(z) > 2:
+            img[y, x] = np.interp(iteration, [0,MAX_ITER], [0,256])
+        else:
+            img[y, x] = 0
+
+# Bild speichern
+plt.imshow(img)
+
+plt.axis("off")
+
+plt.savefig(
+    "mandelbrot.png",
+    bbox_inches="tight",
+    pad_inches=0
+)
+
+plt.close()

@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://bta61gkokbm1e"]
+
+[sub_resource type="GDScript" id="GDScript_y32ns"]
+script/source = "extends Node2D
+
+func _draw():
+
+	# Kreis
+	draw_circle(
+		Vector2(100, 100),
+		50,
+		Color.RED
+	)
+
+	# Rechteck
+	draw_rect(
+		Rect2(
+			200,
+			50,
+			120,
+			80
+		),
+		Color.GREEN
+	)
+
+	# Dreieck
+	draw_polygon(
+		PackedVector2Array([
+			Vector2(450, 50),
+			Vector2(400, 150),
+			Vector2(500, 150)
+		]),
+		PackedColorArray([
+			Color.BLUE
+		])
+	)
+"
+
+[sub_resource type="GDScript" id="GDScript_wtcfe"]
+script/source = "extends Sprite2D
+
+func _ready():
+
+	texture = load(
+        \"res://player.png\"
+	)
+	
+	position = Vector2(
+		300,
+		200
+	)
+
+	scale = Vector2(
+		0.5,
+		0.5
+	)
+
+var rotation_speed = 90.0
+
+func _process(delta):
+
+	rotation_degrees += (
+		rotation_speed
+		* delta
+	)
+"
+
+[sub_resource type="GDScript" id="GDScript_0e48y"]
+script/source = "extends Sprite2D
+
+var speed = 250.0
+
+func _ready():
+
+	texture = load(
+        \"res://player.png\"
+	)
+	
+	position = Vector2(
+		300,
+		200
+	)
+
+	scale = Vector2(
+		0.5,
+		0.5
+	)
+	
+func _process(delta):
+
+	var direction = Vector2.ZERO
+
+	if Input.is_action_pressed(\"ui_right\"):
+		direction.x += 1
+
+	if Input.is_action_pressed(\"ui_left\"):
+		direction.x -= 1
+
+	if Input.is_action_pressed(\"ui_down\"):
+		direction.y += 1
+
+	if Input.is_action_pressed(\"ui_up\"):
+		direction.y -= 1
+
+	if direction.length() > 0:
+		direction = direction.normalized()
+
+	position += (
+		direction
+		* speed
+		* delta
+	)
+"
+
+[node name="Node2D" type="Node2D" unique_id=607894985]
+script = SubResource("GDScript_y32ns")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1895024092]
+script = SubResource("GDScript_wtcfe")
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=365273228]
+script = SubResource("GDScript_0e48y")

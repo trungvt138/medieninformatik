@@ -1,0 +1,20 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Hauskörper -->
+    <rect x="100" y="120" width="200" height="120" fill="lightgray" stroke="black"></rect>
+
+    <!-- Dach -->
+    <polygon points="100,120 200,40 300,120" fill="darkred" stroke="black"></polygon>
+
+    <!-- Tür -->
+    <rect x="180" y="170" width="40" height="70" fill="brown" stroke="black"></rect>
+
+    <!-- Fenster links -->
+    <rect x="130" y="150" width="40" height="40" fill="lightblue" stroke="black"></rect>
+
+    <!-- Fenster rechts -->
+    <rect x="230" y="150" width="40" height="40" fill="lightblue" stroke="black"></rect>
+
+</svg>
