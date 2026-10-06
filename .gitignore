@@ -11,6 +11,7 @@ GraphicsAV/**/*.mov
 GraphicsAV/**/*.avi
 GraphicsAV/**/*.webm
 GraphicsAV/**/*.ogg
+GraphicsAV/**/*.png
 .DS_Store
 
 # VirtualBox VM files
