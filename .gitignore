@@ -1,6 +1,16 @@
 zip
 GraphicsAV/*.zip
 GraphicsAV/Moodle-Export-Raw/
+GraphicsAV/**/*.wav
+GraphicsAV/**/*.mp3
+GraphicsAV/**/*.m4a
+GraphicsAV/**/*.flac
+GraphicsAV/**/*.aac
+GraphicsAV/**/*.mp4
+GraphicsAV/**/*.mov
+GraphicsAV/**/*.avi
+GraphicsAV/**/*.webm
+GraphicsAV/**/*.ogg
 .DS_Store
 
 # VirtualBox VM files
