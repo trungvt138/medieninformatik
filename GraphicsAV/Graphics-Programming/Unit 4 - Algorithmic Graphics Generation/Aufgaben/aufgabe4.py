@@ -60,7 +60,7 @@ result += perlin_noise(16, img_size) * 0.25
 result = (result - result.min()) / (result.max() - result.min()) * 255
 
 # Save and display
-Image.fromarray(result.astype(np.uint8)).save('perlin_noise.png')
+#Image.fromarray(result.astype(np.uint8)).save('perlin_noise.png')
 plt.imshow(result, cmap='gray')
 plt.title('Perlin Noise (3 Octaves)')
 plt.axis('off')

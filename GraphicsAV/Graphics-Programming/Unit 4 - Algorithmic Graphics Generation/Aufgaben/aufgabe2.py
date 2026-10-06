@@ -13,14 +13,14 @@ def create_image(size):
     image = np.zeros((size, size))
     for i in range(size):
         for j in range(size):
-            image[i, j] = np.cos(i)*np.cos(j)
+            image[i, j] = np.cos(i)*np.sin(j)
     return image
 
 # Create the image
 size = 512
 image = create_image(size)
 image = normalize(image)
-Image.fromarray(image).save('cosine_cosine_gradient_image.png')
+#Image.fromarray(image).save('cosine_cosine_gradient_image.png')
 
 # Display the image
 plt.imshow(image, cmap='gray')

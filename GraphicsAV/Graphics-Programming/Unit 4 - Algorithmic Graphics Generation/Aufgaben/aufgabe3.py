@@ -21,10 +21,10 @@ def create_image_normal(size):
 # Create the image
 size = 100
 image = create_image(size)
-Image.fromarray(image.astype(np.uint8)).save('white_noise_image.png')
+#Image.fromarray(image.astype(np.uint8)).save('white_noise_image.png')
 
 image_normal = create_image_normal(size)
-Image.fromarray(image_normal.astype(np.uint8)).save('white_noise_image_normal_dis.png')
+#Image.fromarray(image_normal.astype(np.uint8)).save('white_noise_image_normal_dis.png')
 
 
 # Display two images

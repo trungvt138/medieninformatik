@@ -10,8 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import librosa
 
-#y, sr = librosa.load("audio_Ottos_Mops.wav", sr=None, mono=True)
-y, sr = librosa.load("sinus_440Hz.wav",sr=None, mono=True)
+y, sr = librosa.load("audio_Ottos_Mops.wav", sr=None, mono=True)
+#y, sr = librosa.load("sinus_440Hz.wav",sr=None, mono=True)
 
 # librosa.yin:
 # schätzt die Grundfrequenz (F0) frameweise.
