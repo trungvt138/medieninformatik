@@ -1,9 +1,9 @@
-[submodule "GraphicsAV/py101-media-informatics"]
-	path = GraphicsAV/Graphics-Programming/Unit 2 - Python/py101-media-informatics
-	url = https://github.com/trungvt138/py101-media-informatics
 [submodule "HCI/Flip_It"]
 	path = HCI/Flip_It
 	url = https://github.com/trungvt138/flip_it.git
 [submodule "SmartMedia/smartmediaprojekt"]
 	path = SmartMedia/smartmediaprojekt
 	url = git@git.haw-hamburg.de:smart-media-w26/smartmediaprojekt.git
+[submodule "WebProgramming/1.Termin/online-resume"]
+	path = WebProgramming/1.Termin/online-resume
+	url = https://github.com/trungvt138/online-resume.git
