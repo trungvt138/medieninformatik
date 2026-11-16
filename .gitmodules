@@ -1,9 +1,3 @@
-[submodule "HCI/Flip_It"]
-	path = HCI/Flip_It
-	url = https://github.com/trungvt138/flip_it.git
-[submodule "SmartMedia/smartmediaprojekt"]
-	path = SmartMedia/smartmediaprojekt
-	url = git@git.haw-hamburg.de:smart-media-w26/smartmediaprojekt.git
 [submodule "WebProgramming/1.Termin/online-resume"]
 	path = WebProgramming/1.Termin/online-resume
 	url = https://github.com/trungvt138/online-resume.git

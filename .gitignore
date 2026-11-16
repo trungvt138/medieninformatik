@@ -157,3 +157,6 @@ dist
 **/target/
 
 .venv
+# Separate repos (not tracked here)
+HCI/Flip_It/
+SmartMedia/smartmediaprojekt/
