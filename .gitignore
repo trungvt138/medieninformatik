@@ -160,3 +160,7 @@ dist
 # Separate repos (not tracked here)
 HCI/Flip_It/
 SmartMedia/smartmediaprojekt/
+
+# NLP
+NLP/*.zip
+__MACOSX/
