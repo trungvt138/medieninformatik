@@ -1,0 +1,12 @@
+FROM python:3.13.14-slim
+
+COPY requirements.txt /tmp/requirements.txt
+RUN python -m pip install --no-cache-dir -r /tmp/requirements.txt
+ENV NLTK_DATA=/usr/local/share/nltk_data
+RUN python -m nltk.downloader -e -d "$NLTK_DATA" wordnet averaged_perceptron_tagger_eng
+RUN useradd --create-home --uid 1000 jovyan
+
+WORKDIR /workspace
+USER jovyan
+
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--ServerApp.root_dir=/workspace"]
