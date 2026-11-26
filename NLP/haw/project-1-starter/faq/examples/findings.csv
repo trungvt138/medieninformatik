@@ -1,0 +1,5 @@
+id,line,type,original_line,anomaly_line
+101,3,spelling,The panel contains wood.,The pannel contains wood.
+101,4,extra_word,It has a fibre core.,It has has a fibre core.
+101,5,advertising,Choose our leading panel today!,Choose our leading panel today!
+102,3,format,Recycled content: 80%.,Recycled content: 80%%.

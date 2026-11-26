@@ -1,0 +1,8 @@
+.idea/
+.vscode/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+/data/imdb/my_test_predictions.csv
